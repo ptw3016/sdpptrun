@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const nodemailer = require("nodemailer");
 const scrapeLogic = require("./scrapeLogic");
+const infochkppt = require("./infochkppt");
 
 require("dotenv").config();
 
@@ -113,9 +114,6 @@ async function startTimer() {
                             }
                         }
                         //console.log("새메시지 ID : " + messages[i].id) //동시에 들어온 새메일 체크해보기
-
-
-
 
                         //***
                         if (testsw == process.env.testsw) {
@@ -332,10 +330,10 @@ async function startTimer() {
                     var emailsubject = "잘못된 요청으로 에러가 떳습니다. 종료합니다!";
                     var emailcontent = "잘못된 요청으로 에러가 떳습니다. 종료합니다!\n\n" +
                         "/rqname : " + infochkname + "\n" +
-                        "/rqphnum : " + infochkphnum + "\n" +
-                        "/emailgetname : " + prjson.prscname + "\n" +
+                        "/rqphnum : " + infochkphnum + "\n";
+                    
 
-                        "-----error msg-----\n" +
+                    emailcontent += "-----error msg-----\n" +
                         e.message + "\n" +
                         "-----error stack-----\n" +
                         e.stack;

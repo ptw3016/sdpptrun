@@ -260,7 +260,4 @@ async function gapkttpstget() {
 
 }
 
-
-ktsendPr();
-
 module.exports = { ktsendPr };
