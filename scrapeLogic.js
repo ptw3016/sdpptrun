@@ -477,11 +477,6 @@ const scrapeLogic = async (reqbd, res) => {
     console.error(e);
     var emailsubject = "(제목)예약 중 에러가 떳습니다.!";
     var emailcontent = "(본문)예약 중 에러가 떳습니다.!\n" +
-
-      "----reqbd----\n" +
-      "/예약자명 : " + reqbd.ipname + "\n" +  //name
-      "/예약일자 : " + prdatecvwk + "\n" +
-      "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n" +
       "-----error msg-----\n" +
       e.message + "\n" +
       "-----error stack-----\n" +
@@ -634,16 +629,10 @@ async function googlesheetappend(VALUES) {
     var emailsubject = "예약요청중 에러발생!!";
     var emailcontent = "예약요청중 에러발생!!\n" +
 
-      "----reqbd----\n" +
-      "/예약자명 : " + prjson2.prscname + "\n" +  //name
-      "/예약일자 : " + prjson2.prscdate + "\n" +
-      "/예약금액 : " + gjgachatt + "\n" +
-      "/예약갯수 : " + scgstext + "개\n\n" +
       "-----error msg-----\n" +
       e.message + "\n" +
       "-----error stack-----\n" +
       e.stack;
-
 
     var sendemjson = {
       to: process.env.sdadminnvml,

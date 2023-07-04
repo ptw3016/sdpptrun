@@ -328,11 +328,9 @@ async function startTimer() {
                         rstmsgchk = await messages[0].id;
                     }
                     var emailsubject = "잘못된 요청으로 에러가 떳습니다. 종료합니다!";
-                    var emailcontent = "잘못된 요청으로 에러가 떳습니다. 종료합니다!\n\n" +
-                        "/rqname : " + infochkname + "\n" +
-                        "/rqphnum : " + infochkphnum + "\n";
+                    var emailcontent = "잘못된 요청으로 에러가 떳습니다. 종료합니다!\n\n" ;
+                       
                     
-
                     emailcontent += "-----error msg-----\n" +
                         e.message + "\n" +
                         "-----error stack-----\n" +
@@ -361,16 +359,9 @@ async function startTimer() {
     } catch (e) {
         console.error(e);
         var emailsubject = "예약 요청 중 에러가 떳습니다.! [시스템에러-실행중단됨]";
-        //var prdatecv = reqbd.ipyear + "-" + numpad(reqbd.ipmonth) + "-" + numpad(reqbd.ipdate);
-        var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
+        //var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
         var emailcontent = "예약 요청 중 에러가 떳습니다.! [시스템에러-실행중단됨]\n" +
             e + "\n" +
-            "----reqbd----\n" +
-            "/예약자명 : " + prjson.prscname + "\n" +  //name
-            "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
-            "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
-            "/예약갯수 : " + scgstextnum + "개" +
-
             "-----error msg-----\n" +
             e.message + "\n" +
             "-----error stack-----\n" +
@@ -547,11 +538,6 @@ async function googleemailmsgget(msgid) {
         console.error(e);
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
-            "----reqbd----\n" +
-            "/예약자명 : " + prjson2.prscname + "\n" +  //name
-            "/예약일자 : " + prjson2.prscdate + "\n" +
-            "/예약금액 : " + gjgachatt + "\n" +
-            "/예약갯수 : " + scgstext + "개\n\n" +
             "-----error msg-----\n" +
             e.message + "\n" +
             "-----error stack-----\n" +
