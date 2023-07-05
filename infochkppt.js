@@ -262,6 +262,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         //메일 전송
         scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
     } finally {
+        console.log("이용내역 검증 브라우저 종료");
         await sdprchkbrs.close();
     }
 

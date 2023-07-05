@@ -257,10 +257,12 @@ const scrapeLogic = async (reqbd, res) => {
           if (value2 == iptime) {
             const aTag2 = await elements2[i].$('a');
             await aTag2.click();
-            //console.log("원하는 시간1 클릭완료됨");
+            // console.log("원하는 시간1 클릭완료됨:"+iptime);
+            // console.log("원하는 시간1 element:" +value2);
             break;
           }
         }
+        
         for (let i = 0; i < elements3.length; i++) {
           const span3 = await elements3[i].$('span[ng-bind="$ctrl.getStartTime(timeSchedule)"]');
           const value3 = await page.evaluate(el => el.innerText, span3);
@@ -268,7 +270,8 @@ const scrapeLogic = async (reqbd, res) => {
           if (value3 == iptime2) {
             const aTag3 = await elements3[i].$('a');
             await aTag3.click();
-            //console.log("원하는 시간2 클릭완료됨");
+            // console.log("원하는 시간2 클릭완료됨:"+iptime2);
+            // console.log("원하는 시간2 element:" +value3);
             break;
           }
         }
@@ -566,22 +569,26 @@ async function weekdaypr(ipdate) {
 }
 
 function subtract30Minutes(timeString) {
-  // 시간과 분으로 분리합니다.
-  const [hours, minutes] = timeString.split(':').map(str => parseInt(str, 10));
-  // 시간에서 30분을 빼줍니다.
-  let newHours = hours;
-  let newMinutes = minutes - 30;
-  if (newMinutes < 0) {
-    newMinutes += 60;
-    newHours -= 1;
+    // 시간과 분으로 분리합니다.
+    const [hours, minutes] = timeString.split(':').map(str => parseInt(str, 10));
+    // 시간에서 30분을 빼줍니다.
+    let newHours = hours;
+    let newMinutes = minutes - 30;
+    if (newMinutes < 0) {
+      newMinutes += 60;
+      newHours -= 1;
+    }
+    // 시간을 24시간 형식으로 만듭니다.
+    if (newHours < 0) {
+      newHours += 24;
+    }
+    // 결과를 문자열로 반환합니다.
+    if(newHours==0){
+        newHours = 12;
+    }
+
+    return `${newHours}:${newMinutes.toString().padStart(2, '0')}`;
   }
-  // 시간을 24시간 형식으로 만듭니다.
-  if (newHours < 0) {
-    newHours += 24;
-  }
-  // 결과를 문자열로 반환합니다.
-  return `${newHours}:${newMinutes.toString().padStart(2, '0')}`;
-}
 
 function timeDifference(time1, time2) {
   let hour1 = parseInt(time1.split(" ")[1].split(":")[0]);
@@ -640,7 +647,7 @@ async function googlesheetappend(VALUES) {
       message: emailcontent
     }
     //메일 전송
-    scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
+    sendemailPr(sendemjson); // 이메일 전송
   }
 
 }

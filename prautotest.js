@@ -15,7 +15,7 @@ let interval;
 var counta = 1;
 var rstmsgchk = "";
 var rstidchk = false;
-const testsw = "";   //test sw
+const testsw = "";   //test sw - time set!
 const devsw = ""; //dev sw
 
 async function startTimer() {
@@ -288,17 +288,35 @@ async function startTimer() {
                             scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
                             //await scrapeLogic.googlesheetappend(VALUES);
                         }
+                        if (testsw == process.env.testsw) {
+                            var ipyearval = 2023;
+                            var ipmonthval = 7;
+                            var ipdayval = "6";
+                            var iptimestval1 = "오후";
+                            var iptimeedval1 = "오후";
+                            var iptimestval2 = "12:00";
+                            var iptimeedval2 = "1:00";
+                            //console.log();
+                        } else {
+                            var ipyearval = prscdatejson.dateYear;
+                            var ipmonthval = prscdatejson.dateMonth;
+                            var ipdayval = prscdatejson.dateDay;
+                            var iptimestval1 = prusedateext.ipdatest1;
+                            var iptimeedval1 = prusedateext.ipdateed1;
+                            var iptimestval2 = prusedateext.ipdatest2;
+                            var iptimeedval2 = prusedateext.ipdateed2;
+                        }
 
                         var prscjson = {  // 실사용
                             prrqsw: "prrqAutoswon",
                             ipname: prjson.prscname,
-                            ipyear: prscdatejson.dateYear,  //숫자만! 스트링말고!
-                            ipmonth: prscdatejson.dateMonth,    //숫자만! 스트링말고!
-                            ipdate: prscdatejson.dateDay,  //스트링으로만!
-                            timegb: prusedateext.ipdatest1, //스트링으로만!
-                            timegb2: prusedateext.ipdateed1, //스트링으로만!
-                            iptime: prusedateext.ipdatest2, //스트링으로만!
-                            iptime2: prusedateext.ipdateed2, //스트링으로만!
+                            ipyear: ipyearval,  //숫자만! 스트링말고!
+                            ipmonth: ipmonthval,    //숫자만! 스트링말고!
+                            ipdate: ipdayval,  //스트링으로만!
+                            timegb: iptimestval1, //스트링으로만!
+                            timegb2: iptimeedval1, //스트링으로만!
+                            iptime: iptimestval2, //스트링으로만!
+                            iptime2: iptimeedval2, //스트링으로만!
                             ipgjst: prjson.prgjst,
                             ipgjsd: prjson.prgjsd,
                             ipgjga: gjgachatt,
@@ -328,9 +346,9 @@ async function startTimer() {
                         rstmsgchk = await messages[0].id;
                     }
                     var emailsubject = "잘못된 요청으로 에러가 떳습니다. 종료합니다!";
-                    var emailcontent = "잘못된 요청으로 에러가 떳습니다. 종료합니다!\n\n" ;
-                       
-                    
+                    var emailcontent = "잘못된 요청으로 에러가 떳습니다. 종료합니다!\n\n";
+
+
                     emailcontent += "-----error msg-----\n" +
                         e.message + "\n" +
                         "-----error stack-----\n" +
