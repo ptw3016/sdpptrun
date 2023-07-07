@@ -446,8 +446,15 @@ const scrapeLogic = async (reqbd, res) => {
         await browser.close();
         //res.set('Content-Type', 'image/png');
         //res.send(screenshot);
-
-        await ktMsgSendPr.ktsendPr();
+        const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
+        const ktsjs = {
+          ktsdname : reqbd.ipname,
+          apprnum : bjroomchk,
+          date: prdatecvwk,
+          time: apprtime,
+          appay: reqbd.ipgjga,
+        }
+        await ktMsgSendPr.ktsendPr(ktsjs);
         
         emailsubject = "(제목)예약이 성공적으로 완료되었습니다.!";
         emailcontent = "(본문)예약이 성공적으로 완료되었습니다.!\n" +
@@ -455,7 +462,7 @@ const scrapeLogic = async (reqbd, res) => {
           "----reqbd----\n" +
           "/예약자명 : " + reqbd.ipname + "\n" +  //name
           "/예약일자 : " + prdatecvwk + "\n" +
-          "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n" +
+          "/예약시간 : " + apprtime + "\n" +
           "/예약완료부스 : " + bjroomchk + "\n";
 
         stipVALUES[0][2] = bjroomchk;

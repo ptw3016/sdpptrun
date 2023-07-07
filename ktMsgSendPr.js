@@ -57,12 +57,12 @@ const ktsendPr = async (sjs) => {
     const tempid = process.env.prktmsgtempid;
     const sendjson = {
         to: process.env.prktmsgttestnum,
-        ktsdname: "홍길동",
+        ktsdname: sjs.ktsdname,
         apmbgb: "비회원",
-        apprnum: "1번부스",
-        date: "2023-06-28",
-        time: "오후 12:00 ~ 오후 13:00",
-        appay: "0원",
+        apprnum: sjs.apprnum,
+        date: sjs.date,
+        time: sjs.time,
+        appay: sjs.appay,
         appaysd: "결제수단",
         apbb: "결제방법",
         btnjr: ""
