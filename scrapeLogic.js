@@ -453,9 +453,17 @@ const scrapeLogic = async (reqbd, res) => {
           date: prdatecvwk,
           time: apprtime,
           appay: reqbd.ipgjga,
+          appaysd: reqbd.ipgjsd,
+          apbb: "네이버예약"
         }
-        await ktMsgSendPr.ktsendPr(ktsjs);
-        
+
+        const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
+        var msgrqval = "";
+        if(msgrqrst == "0000"){
+          msgrqval = "전송성공 (code:"+msgrqrst+")";
+        }else{
+          msgrqval = "전송실패 (code:"+msgrqrst+")";
+        }
         emailsubject = "(제목)예약이 성공적으로 완료되었습니다.!";
         emailcontent = "(본문)예약이 성공적으로 완료되었습니다.!\n" +
           "*혹시 셀프예약 회원이면 중복예약일 수 있으니 예약을 취소해주세요!\n" +
@@ -463,7 +471,8 @@ const scrapeLogic = async (reqbd, res) => {
           "/예약자명 : " + reqbd.ipname + "\n" +  //name
           "/예약일자 : " + prdatecvwk + "\n" +
           "/예약시간 : " + apprtime + "\n" +
-          "/예약완료부스 : " + bjroomchk + "\n";
+          "/예약완료부스 : " + bjroomchk + "\n"+
+          "/메시지 전송결과 : " + msgrqval;
 
         stipVALUES[0][2] = bjroomchk;
         googlesheetappend(stipVALUES);

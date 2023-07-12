@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
+const scrapeLogic = require("./scrapeLogic");
 require("dotenv").config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -63,8 +64,8 @@ const ktsendPr = async (sjs) => {
         date: sjs.date,
         time: sjs.time,
         appay: sjs.appay,
-        appaysd: "결제수단",
-        apbb: "결제방법",
+        appaysd: sjs.appaysd,
+        apbb: sjs.apbb,
         btnjr: ""
     }
 
@@ -80,11 +81,25 @@ const ktsendPr = async (sjs) => {
         const response = await axios.post(apiUrl, data, { headers });
         const result = response.data;
         const messageId = result.messages[0].messageId;
-        var rstmsg = await getKakaoATResult(accessKey, serviceId, messageId)
-        console.log("메시지 전송결과 : " + rstmsg.messageStatusCode);
+        const rstmsg = await getKakaoATResult(accessKey, serviceId, messageId)
+        const msgrstcode = rstmsg.messageStatusCode;
+        console.log("메시지 요청결과 : " + rstmsg.messageStatusCode);
+        return msgrstcode;
+    } catch (e) {
+        var emailsubject = "알림 메시지 요청중 에러발생!!";
+        var emailcontent = "알림 메시지 요청중 에러발생!!\n" +
+            "-----error msg-----\n" +
+            e.message + "\n" +
+            "-----error stack-----\n" +
+            e.stack;
 
-    } catch (error) {
-
+        var sendemjson = {
+            to: process.env.sdadminnvml,
+            subject: emailsubject,
+            message: emailcontent
+        }
+        //메일 전송
+        scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
     }
 
 }
@@ -160,24 +175,24 @@ async function getRequestParams(tempid, sendjson) {
 
 
     if (btnjrbr == "btnaccent") {
-            title = sendjson.title;
-            //console.log(title);
-            return {
-              templateCode: tempid,
-              plusFriendId: "@"+ktPlusId, // Plus Friend ID
-              messages: [
+        title = sendjson.title;
+        //console.log(title);
+        return {
+            templateCode: tempid,
+            plusFriendId: "@" + ktPlusId, // Plus Friend ID
+            messages: [
                 {
-                  "to": to,
-                  "title": title,
-                  "content": tempcontent,
-                  "buttons": btncontents
+                    "to": to,
+                    "title": title,
+                    "content": tempcontent,
+                    "buttons": btncontents
                 }
-              ]
-            };
+            ]
+        };
     } else {
         return {
             templateCode: tempid,
-            plusFriendId: "@"+ktPlusId, // Plus Friend ID
+            plusFriendId: "@" + ktPlusId, // Plus Friend ID
             messages: [
                 {
                     "to": to,
@@ -249,15 +264,15 @@ async function gapkttpstget() {
     const authClient = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     authClient.setCredentials({ refresh_token: REFRESH_TOKEN2 });
     const sheets = google.sheets({ version: 'v4', auth: authClient });
-    const response = await sheets.spreadsheets.values.get({ 
+    const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SHEET_ID,
         range: `${sheetName}!${kttprange}`,
     });
 
     const values = response.data.values;
     //console.log(values[0]);
-    return values;
 
+    return values;
 }
 
 module.exports = { ktsendPr };
