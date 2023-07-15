@@ -291,11 +291,11 @@ async function startTimer() {
                         if (testsw == process.env.testsw) {
                             var ipyearval = 2023;
                             var ipmonthval = 7;
-                            var ipdayval = "6";
+                            var ipdayval = "17";
                             var iptimestval1 = "오후";
                             var iptimeedval1 = "오후";
-                            var iptimestval2 = "12:00";
-                            var iptimeedval2 = "1:00";
+                            var iptimestval2 = "5:00";
+                            var iptimeedval2 = "6:00";
                             //console.log();
                         } else {
                             var ipyearval = prscdatejson.dateYear;

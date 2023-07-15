@@ -167,7 +167,7 @@ const scrapeLogic = async (reqbd, res) => {
     const timegb = reqbd.timegb;   //"오전"; //스트링으로만!
     const timegb2 = reqbd.timegb2;   //"오전"; //스트링으로만!
     const iptime = reqbd.iptime;   //"2:30"; //스트링으로만!
-    const iptime2 = subtract30Minutes(reqbd.iptime2);   //"3:00"; //스트링으로만!
+    const iptime2cv = subtract30Minutes(reqbd.iptime2);   //"3:00"; //스트링으로만!
 
     const getyearval = await page.evaluate(() => {
       const getyear = document.querySelector('.calendar-title span:nth-child(1)').textContent; //년도
@@ -267,10 +267,10 @@ const scrapeLogic = async (reqbd, res) => {
           const span3 = await elements3[i].$('span[ng-bind="$ctrl.getStartTime(timeSchedule)"]');
           const value3 = await page.evaluate(el => el.innerText, span3);
           //console.log(value3);
-          if (value3 == iptime2) {
+          if (value3 == iptime2cv) {
             const aTag3 = await elements3[i].$('a');
             await aTag3.click();
-            // console.log("원하는 시간2 클릭완료됨:"+iptime2);
+            // console.log("원하는 시간2 클릭완료됨:"+iptime2cv);
             // console.log("원하는 시간2 element:" +value3);
             break;
           }
@@ -355,7 +355,7 @@ const scrapeLogic = async (reqbd, res) => {
 
         // div5 = "pm";
         // iptime = "10:00";
-        // iptime2 = "10:30";
+        // iptime2cv = "10:30";
 
         var liElements2 = await page.$$('div.' + div4 + ' > ul.lst_time > li.item');
         for (let liElement2 of liElements2) {
@@ -370,7 +370,7 @@ const scrapeLogic = async (reqbd, res) => {
         var liElements3 = await page.$$('div.' + div5 + ' > ul.lst_time > li.item');
         for (let liElement3 of liElements3) {
           const spanText2 = await page.evaluate(el => el.querySelector('span.time_info_box > span').textContent, liElement3);
-          if (spanText2 === iptime2) {
+          if (spanText2 === iptime2cv) {
             var aElement3 = await liElement3.$('a.anchor');
             await aElement3.click();
             break;
@@ -473,6 +473,7 @@ const scrapeLogic = async (reqbd, res) => {
           "/예약시간 : " + apprtime + "\n" +
           "/예약완료부스 : " + bjroomchk + "\n"+
           "/메시지 전송결과 : " + msgrqval;
+          "/예약클릭시간 : 1st['"+iptime+"'], 2nd['"+iptime2cv+"'] <-제대로 클릭되었는지 확인해보기!"; 
 
         stipVALUES[0][2] = bjroomchk;
         googlesheetappend(stipVALUES);
