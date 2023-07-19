@@ -41,19 +41,17 @@ app.get("/", (req, res) => {
 
 
 
-// app.post('/scrapepost', (req, res) => {
-//   const { body } = req;
-//   const prrqswchk = body.prrqsw;
-//   console.log(process.env.RQSW_ID);
-//   if (prrqswchk === process.env.RQSW_ID) {
-//     console.log("요청완료!");
-//     //scrapeLogic(req.body,res);
+app.post('/scrapepost', (req, res) => {
+  const { body } = req;
+  const prrqswchk = body.prrqsw;
 
-//   } else {
-//     res.send('잘못된 요청입니다.');
-//   }
-//     //res.send(test1);
-// });
+  if (prrqswchk === process.env.RQSW_ID) {
+    res.send('요청완료-대기');
+  } else {
+    res.send('잘못된 요청입니다.');
+  }
+    //res.send(test1);
+});
   
 app.listen(PORT, () => {
     prautotest.startTimer();
