@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/text-to-speech": "^4.2.3",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "dotenv": "^16.0.3",
