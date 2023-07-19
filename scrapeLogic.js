@@ -472,7 +472,7 @@ const scrapeLogic = async (reqbd, res) => {
           "/예약일자 : " + prdatecvwk + "\n" +
           "/예약시간 : " + apprtime + "\n" +
           "/예약완료부스 : " + bjroomchk + "\n"+
-          "/메시지 전송결과 : " + msgrqval;
+          "/메시지 전송결과 : " + msgrqval + "\n"+
           "/예약클릭시간 : 1st['"+iptime+"'], 2nd['"+iptime2cv+"'] <-제대로 클릭되었는지 확인해보기!"; 
 
         stipVALUES[0][2] = bjroomchk;
