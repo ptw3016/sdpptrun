@@ -30,8 +30,8 @@ app.use(bodyParser.json());
 // });
 
 
-app.get("/", (req, res) => {
-    res.send("서버테스트 준비완료!");
+app.get("/lguptest", (req, res) => {
+    res.send("lgup테스트 준비완료!");
 });
 
 // app.get("/infochkppt", (req, res) => {
