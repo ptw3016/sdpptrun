@@ -15,7 +15,7 @@ let interval;
 var counta = 1;
 var rstmsgchk = "";
 var rstidchk = false;
-const testsw = "";   //test sw - time set!
+const testsw = "";   //test sw - timeset-search!
 const devsw = ""; //dev sw
 
 async function startTimer() {
@@ -288,14 +288,14 @@ async function startTimer() {
                             scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
                             //await scrapeLogic.googlesheetappend(VALUES);
                         }
-                        if (testsw == process.env.testsw) {
+                        if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
                             var ipmonthval = 7;
-                            var ipdayval = "17";
-                            var iptimestval1 = "오후";
-                            var iptimeedval1 = "오후";
-                            var iptimestval2 = "5:00";
-                            var iptimeedval2 = "6:00";
+                            var ipdayval = "25";
+                            var iptimestval1 = "오전";
+                            var iptimeedval1 = "오전";
+                            var iptimestval2 = "9:00";
+                            var iptimeedval2 = "10:00";
                             //console.log();
                         } else {
                             var ipyearval = prscdatejson.dateYear;

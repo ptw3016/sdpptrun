@@ -28,9 +28,11 @@ app.use(bodyParser.json());
 //       res.send('잘못된 요청입니다.');
 //     }
 // });
+app.get("/", (req, res) => {
+  res.send("ppt 구동 준비완료!");
+});
 
-
-app.get("/lguptest", (req, res) => {
+app.get("/lguptest.php", (req, res) => {
     res.send("lgup테스트 준비완료!");
 });
 
