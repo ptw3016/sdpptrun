@@ -3,7 +3,7 @@ const app = express();
 const { scrapeLogic } = require("./scrapeLogic");
 const prautotest = require("./prautotest.js");
 const bodyParser = require('body-parser');
-const infochkppt = require("./infochkppt");
+const ktMsgSendPr = require("./ktMsgSendPr");
 
 const PORT = process.env.PORT || 4000;
 //require("dotenv").config();
@@ -41,20 +41,31 @@ app.get("/lguptest.php", (req, res) => {
 //   infochkppt.sdprgetinfo(req,res);
 // });
 
-
-
-app.post('/scrapepost', (req, res) => {
+app.post('/scrapepost', async(req, res) => {
   const { body } = req;
   const prrqswchk = body.prrqsw;
 
   if (prrqswchk === process.env.RQSW_ID) {
+    const ktsjs = {
+      ktsdname: "테스트",
+      apprnum: "1번test",
+      date: "날짜test",
+      time: "시간test",
+      appay: "금액test",
+      appaysd: "결제수단test",
+      apbb: "예약방법test"
+    }
+    const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
     res.send('요청완료-대기');
+    
   } else {
     res.send('잘못된 요청입니다.');
   }
     //res.send(test1);
 });
-  
+
+
+
 app.listen(PORT, () => {
     prautotest.startTimer();
     console.log(`Listening on port ${PORT}`); 
