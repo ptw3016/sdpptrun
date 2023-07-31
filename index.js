@@ -47,13 +47,15 @@ app.post('/scrapepost', async(req, res) => {
 
   if (prrqswchk === process.env.RQSW_ID) {
     const ktsjs = {
-      ktsdname: "테스트",
-      apprnum: "1번test",
-      date: "날짜test",
-      time: "시간test",
-      appay: "금액test",
-      appaysd: "결제수단test",
-      apbb: "예약방법test"
+      ktsdname: "",
+      apprnum: "",
+      date: "",
+      time: "",
+      appay: "",
+      appaysd: "",
+      apbb: "",
+      tempid: "sdalertcall1",
+      btnjr: ""
     }
     const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
     res.send('요청완료-대기');

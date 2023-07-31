@@ -55,7 +55,7 @@ const ktsendPr = async (sjs) => {
         'x-ncp-apigw-signature-v2': signature,
     };
 
-    const tempid = process.env.prktmsgtempid;
+    const tempid = sjs.tempid;
     const sendjson = {
         to: process.env.prktmsgttestnum,
         ktsdname: sjs.ktsdname,

@@ -483,7 +483,8 @@ const scrapeLogic = async (reqbd, res) => {
             time: apprtime,
             appay: reqbd.ipgjga,
             appaysd: reqbd.ipgjsd,
-            apbb: "네이버예약"
+            apbb: "네이버예약",
+            tempid: "sdalertpr2"
           }
 
           const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
