@@ -172,6 +172,8 @@ async function getRequestParams(tempid, sendjson) {
         tempcontent = tempcontent.replace("#{번호2}", "010-5516-3016");
         tempcontent = tempcontent.replace("#{홈페이지주소}", "www.sharpdurm.co.kr");
 
+    }else if(tempid === "sdalertcall1"){  //콜백
+        to = sendjson.to;
     }
 
 
