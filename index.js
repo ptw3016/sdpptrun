@@ -44,11 +44,11 @@ app.get("/lguptest.php", (req, res) => {
 app.post('/scrapepost', async(req, res) => {
   const { body } = req;
   const prrqswchk = body.prrqsw;  //prphnuo
-  const prrqswprphnuo = body.prphnuo;
-
+  let prrqswprphnuo = body.prphnuo;
+  const prrqoknumcv = await LuPhchk(prrqswprphnuo);
   if (prrqswchk === process.env.RQSW_ID) {
     const ktsjs = {
-      tonum: prrqswprphnuo,
+      tonum: prrqoknumcv,
       ktsdname: "",
       apprnum: "",
       date: "",
@@ -69,7 +69,21 @@ app.post('/scrapepost', async(req, res) => {
     //res.send(test1);
 });
 
-
+async function LuPhchk(pnb) {
+  // 숫자와 '-'를 제외한 모든 문자를 제거합니다.
+  const cleaned = phoneNumber.replace(/\D/g, '');
+  if (cleaned.substring(0, 3) !== '010') {
+    return phoneNumber;
+  }
+  if (cleaned.length === 11 && cleaned[3] === '-' && cleaned[8] === '-') {
+    return cleaned;
+  }
+  const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
+  if (match) {
+    return `${match[1]}-${match[2]}-${match[3]}`;
+  }
+  return phoneNumber;
+}
 
 app.listen(PORT, () => {
     prautotest.startTimer();
