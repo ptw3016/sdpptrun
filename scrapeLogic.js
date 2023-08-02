@@ -169,7 +169,6 @@ const scrapeLogic = async (reqbd, res) => {
     const iptime = reqbd.iptime;   //"2:30"; //스트링으로만!
     const iptime2cv = subtract30Minutes(reqbd.iptime2);   //"3:00"; //스트링으로만!
 
-
     const getyearval = await page.evaluate(() => {
       const getyear = document.querySelector('.month-title span:nth-child(1)').textContent; //년도
       return parseInt(getyear);
@@ -179,10 +178,6 @@ const scrapeLogic = async (reqbd, res) => {
       const getmonth = document.querySelector('.month-title span:nth-child(2)').textContent; //월
       return parseInt(getmonth);
     });
-
-
-
-
 
     //console.log("가져온 년도 : " + getyearval);
     //console.log("가져온 월 : " + getmonthval);
@@ -477,6 +472,7 @@ const scrapeLogic = async (reqbd, res) => {
           //res.send(screenshot);
           const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
           const ktsjs = {
+            tonum: process.env.prktmsgttestnum,   //*수정준비 - stipVALUES[0][17],
             ktsdname: reqbd.ipname,
             apprnum: bjroomchk,
             date: prdatecvwk,
@@ -484,7 +480,8 @@ const scrapeLogic = async (reqbd, res) => {
             appay: reqbd.ipgjga,
             appaysd: reqbd.ipgjsd,
             apbb: "네이버예약",
-            tempid: "sdalertpr2"
+            tempid: "sdalertpr2",
+            sdsendmode: "연습실"
           }
 
           const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
@@ -492,8 +489,9 @@ const scrapeLogic = async (reqbd, res) => {
           if (msgrqrst == "0000") {
             msgrqval = "전송성공 (code:" + msgrqrst + ")";
           } else {
-            msgrqval = "전송실패 (code:" + msgrqrst + ")";
+            msgrqval = "전송실패 (code:" + msgrqrst + ")";  //추후에 문자보내지게
           }
+          const sdnumbchk = await bldMidPhNumb(stipVALUES[0][17]); 
           emailsubject = "(제목)예약이 성공적으로 완료되었습니다.!";
           emailcontent = "(본문)예약이 성공적으로 완료되었습니다.!\n" +
             "*혹시 셀프예약 회원이면 중복예약일 수 있으니 예약을 취소해주세요!\n" +
@@ -502,7 +500,7 @@ const scrapeLogic = async (reqbd, res) => {
             "/예약일자 : " + prdatecvwk + "\n" +
             "/예약시간 : " + apprtime + "\n" +
             "/예약완료부스 : " + bjroomchk + "\n" +
-            "/메시지 전송결과 : " + msgrqval + "\n" +
+            "/메시지 전송결과 : " + msgrqval + "( "+ sdnumbchk+" )\n" +
             "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
 
           stipVALUES[0][2] = bjroomchk;
@@ -515,7 +513,6 @@ const scrapeLogic = async (reqbd, res) => {
           }
           //메일 전송
           sendemailPr(sendemjson); // 이메일 전송
-
 
           return { rqcode: "0000", prresultcode: "0000", prsultreson: "Booking Success!!" };
         }
@@ -683,8 +680,8 @@ async function googlesheetappend(VALUES) {
   } catch (e) {
 
     console.error(e);
-    var emailsubject = "예약요청중 에러발생!!";
-    var emailcontent = "예약요청중 에러발생!!\n" +
+    var emailsubject = "시트에 추가중 에러발생!!";
+    var emailcontent = "시트에 추가중 에러발생!!\n" +
 
       "-----error msg-----\n" +
       e.message + "\n" +
@@ -702,5 +699,22 @@ async function googlesheetappend(VALUES) {
 
 }
 
+async function bldMidPhNumb(phnumb) {
+  // 전화번호가 "xxx-xxxx-xxxx", "xxx-xxx-xxxx", "xx-xxxx-xxxx", "xx-xxx-xxxx" 형식인지 확인
+  const regex = /^\d{2,3}-\d{3,4}-\d{4}$/;
+  if (!regex.test(phnumb)) {
+    // 유효하지 않은 전화번호 형식인 경우 원래 번호 그대로 반환
+    return phnumb;
+  }
+
+  // 가운데 번호를 가져옴
+  const parts = phnumb.split("-");
+  const middleNumber = parts.slice(1, parts.length - 1).join("-");
+
+  // 가운데 번호를 "*"로 대체하여 블라인드 처리
+  const maskedMiddleNumber = "*".repeat(middleNumber.length);
+
+  return phnumb.replace(middleNumber, maskedMiddleNumber);
+}
 
 module.exports = { scrapeLogic, numpad, weekdaypr, sendemailPr, googlesheetappend };

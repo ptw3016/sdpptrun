@@ -8,9 +8,7 @@ require("dotenv").config();
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
-// const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REFRESH_TOKEN2 = process.env.REFRESH_TOKEN2;
-// const SHEET_NAME = process.env.SHEET_NAME;
 const SHEET_ID = process.env.SHEET_ID;
 
 const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.

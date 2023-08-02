@@ -15,7 +15,7 @@ let interval;
 var counta = 1;
 var rstmsgchk = "";
 var rstidchk = false;
-const testsw = "";   //test sw - timeset-search!
+const testsw = "";   //test sw - timeset-search! , *
 const devsw = ""; //dev sw
 
 async function startTimer() {
@@ -90,6 +90,7 @@ async function startTimer() {
             if (rstmsgchk != rstmsgId && rstmsgchk != "") {
                 var infochkname = "";
                 var infochkphnum = "";
+                var testchk = "";
                 var infochkerrt = "";
 
                 try {
@@ -117,27 +118,29 @@ async function startTimer() {
 
                         //***
                         if (testsw == process.env.testsw) {
-                            infochkname = "";
-                            infochkphnum = "";
+                            var infochkrt = await infochkppt.sdprgetinfo();
+                            infochkname = infochkrt.minfochkname;
+                            infochkphnum = process.env.prktmsgttestnum;
+                            testchk = "testing";
                             infochkerrt = "0000";
                         } else {
                             var infochkrt = await infochkppt.sdprgetinfo();
                             //mifcrtcode 결과로 오류이메일 전송 준비!,시트추가도 준비!
-
+                            
                             if (infochkrt.memberinfochk == true && infochkrt.mifcrtcode == "0000") {
                                 console.log("이용내역 일치정보 확인!");
                                 infochkname = infochkrt.minfochkname;
                                 infochkphnum = infochkrt.minfochkphnum;
                                 infochkerrt = infochkrt.mifcrtcode;
                             } else {
-                                console.log("이용내역 일치정보 안됨!");
+                                console.log("이용내역 일치정보 확인 안됨!");
                                 infochkname = infochkrt.minfochkname;
                                 infochkphnum = infochkrt.minfochkphnum;
                                 infochkerrt = infochkrt.mifcrtcode;
                             }
                         }
-                        //--**
 
+                       
 
                         var prjson = await googleemailmsgget(messages[i].id);  //실사용
                         if (prjson == "") {
@@ -202,7 +205,7 @@ async function startTimer() {
                                 emailcontent = "(본문)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
-                                    "/신청자phnum : " + infochkphnum + "\n" +
+                                    "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
                                     "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
                                     "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
                                     "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
@@ -215,7 +218,7 @@ async function startTimer() {
                                 emailcontent = "(본문)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
-                                    "/신청자phnum : " + infochkphnum + "\n" +
+                                    "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
                                     "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
                                     "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
                                     "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
@@ -290,8 +293,8 @@ async function startTimer() {
                         }
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
-                            var ipmonthval = 7;
-                            var ipdayval = "25";
+                            var ipmonthval = 8;
+                            var ipdayval = "3";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";
@@ -307,9 +310,11 @@ async function startTimer() {
                             var iptimeedval2 = prusedateext.ipdateed2;
                         }
 
+                        
+
                         var prscjson = {  // 실사용
                             prrqsw: "prrqAutoswon",
-                            ipname: prjson.prscname,
+                            ipname: infochkname,
                             ipyear: ipyearval,  //숫자만! 스트링말고!
                             ipmonth: ipmonthval,    //숫자만! 스트링말고!
                             ipdate: ipdayval,  //스트링으로만!

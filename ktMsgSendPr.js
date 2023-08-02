@@ -8,12 +8,11 @@ require("dotenv").config();
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
-// const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REFRESH_TOKEN2 = process.env.REFRESH_TOKEN2;
-// const SHEET_NAME = process.env.SHEET_NAME;
 const SHEET_ID = process.env.SHEET_ID;
 const sheetName = process.env.KTTP_ST_NM;
 const ktPlusId = process.env.SdTitle;
+const sheetName_ktny = process.env.KTNY_ST_NM;
 
 function makeSignature(mtval, accKey, urivalue) {
     const method = mtval;
@@ -56,8 +55,21 @@ const ktsendPr = async (sjs) => {
     };
 
     const tempid = sjs.tempid;
+    let sdnum = "";
+    if (sjs.tonum == "") {
+        return "phnum error - empty!";
+    } else {
+        const valdphchk = await valdPhNum(sjs.tonum);
+        if (valdphchk == true) {
+            sdnum = await removeHyphens(sjs.tonum);
+        } else {
+            return "phnum format error!";   //추후에 문자보내지게
+        }
+
+    }
+
     const sendjson = {
-        to: process.env.prktmsgttestnum,
+        to: sdnum,
         ktsdname: sjs.ktsdname,
         apmbgb: "비회원",
         apprnum: sjs.apprnum,
@@ -73,18 +85,33 @@ const ktsendPr = async (sjs) => {
 
     if (params == "0001") {
         console.log("템플릿 가져오기 실패! 종료합니다.");
-        return;
+        return "template error!";
     }
     const data = JSON.stringify(params);
-    
+
 
     try {
         const response = await axios.post(apiUrl, data, { headers });
         const result = response.data;
         const messageId = result.messages[0].messageId;
-        const rstmsg = await getKakaoATResult(accessKey, serviceId, messageId)
-        const msgrstcode = rstmsg.messageStatusCode;
-        console.log("메시지 요청결과 : " + rstmsg.messageStatusCode);
+        const sendresult = await getKakaoATResult(accessKey, serviceId, messageId);
+        const msgrstcode = sendresult.ktmsgresultcode;
+        const msgcontent = params.messages[0].content;
+        console.log("메시지 요청결과 : " + msgrstcode);
+        const currentDate = new Date();
+        const rqinputdtcv = await formDateToStr(currentDate);
+        
+        var sendNyArray = {
+            sdipname: sjs.ktsdname,
+            sdipnum: "", //rgnum
+            sdipcont: msgcontent, //문자내용
+            sdiprsnum: sdnum, //수신번호-보낼번호
+            sdipktrqchk: sendresult.ktrqtresultcode, //요청결과
+            sdipktmsgchk: sendresult.ktmsgresultcode, //메시지전송결과
+            sdipdate: rqinputdtcv,  //요청시간
+            sdipktbr: "알림톡-" + sjs.sdsendmode
+          }
+        await ktnystappend(sendNyArray);
         return msgrstcode;
     } catch (e) {
         var emailsubject = "알림 메시지 요청중 에러발생!!";
@@ -151,7 +178,7 @@ async function getRequestParams(tempid, sendjson) {
 
     if (tempid === "sdalertpr2") {   //연습실
         to = sendjson.to;
-        ktsdname = sendjson.ktsdname;
+        ktsdname = sendjson.ktsdname + "님";
         date = sendjson.date;
         time = sendjson.time;
         apmbgb = sendjson.apmbgb;
@@ -168,11 +195,11 @@ async function getRequestParams(tempid, sendjson) {
         tempcontent = tempcontent.replace("#{결제수단}", appaysd);
         tempcontent = tempcontent.replace("#{결제금액}", appay);
         tempcontent = tempcontent.replace("#{예약방법}", apbb);
-        tempcontent = tempcontent.replace("#{번호1}", "010-4833-8274");
-        tempcontent = tempcontent.replace("#{번호2}", "010-5516-3016");
+        tempcontent = tempcontent.replace("#{번호1}", process.env.KTTP_NUM);
+        tempcontent = tempcontent.replace("#{번호2}", process.env.prktmsgttestnum);
         tempcontent = tempcontent.replace("#{홈페이지주소}", "www.sharpdurm.co.kr");
 
-    }else if(tempid === "sdalertcall1"){  //콜백
+    } else if (tempid === "sdalertcall1") {  //콜백
         to = sendjson.to;
     }
 
@@ -234,6 +261,7 @@ async function getKakaoATResult(acKey, chId, msgId) {
 
     try {
         var reschkresult = "";
+
         return new Promise((resolve, reject) => {
             var rstchkinterval = setInterval(async function () {
                 try {
@@ -246,7 +274,14 @@ async function getKakaoATResult(acKey, chId, msgId) {
                     if (reschkresult.messageStatusCode != undefined) {
                         //console.log("메시지결과 완료");
                         clearInterval(rstchkinterval);
-                        resolve(reschkresult);
+
+                        var sendresult = {
+                            ktrqtresultcode: reschkresult.requestStatusCode,
+                            ktmsgresultcode: reschkresult.messageStatusCode,
+                            smsresultchk: "",
+                            requestTime: reschkresult.requestTime,
+                        };
+                        resolve(sendresult);  //결과보내기
                     }
                 } catch (error) {
                     console.error(error);
@@ -277,5 +312,105 @@ async function gapkttpstget() {
 
     return values;
 }
+
+async function removeHyphens(phnum) {
+    return phnum.replace(/-/g, "");
+}
+
+
+async function valdPhNum(phnuma) {
+    // Regular expression to check the phone number format
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+
+    return phoneRegex.test(phnuma);
+}
+
+async function ktnystappend(sdipjson) {
+    const RANGE = `${sheetName_ktny}!A2:I`; // ex) Sheet1!A1:B2  //한글도가능
+
+    const authClient = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    authClient.setCredentials({ refresh_token: REFRESH_TOKEN2 });
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
+
+    try {
+        var ktname = sdipjson.sdipname; //이름
+        var ktrgnum = sdipjson.sdipnum; //등록번호
+        var ktsenddate = sdipjson.sdipdate; //전송일자
+        var ktsendcont = sdipjson.sdipcont; //전송내용
+        var ktrecievenum = sdipjson.sdiprsnum; //수신번호
+        var ktsendnum = process.env.KTSD_NUM; //발신번호
+        var ktrqresult = sdipjson.sdipktrqchk; //요청결과
+        var ktmsgresult = sdipjson.sdipktmsgchk; //메시지결과
+        if (ktrqresult == "A000") {
+            ktrqresult = "요청:성공";
+        } else {
+            ktrqresult = "요청:실패(" + ktrqresult + ")";
+        }
+        if (ktmsgresult == "0000") {
+            ktmsgresult = "메시지:성공";
+        } else {
+            ktmsgresult = "메시지:실패(" + ktmsgresult + ")";
+        }
+
+        var ktsendresult = ktrqresult + "/" + ktmsgresult;
+        var ktsendgb = sdipjson.sdipktbr; //전송구분
+        var ktsendnyid = new Date().getTime().toString();
+
+        var ktnyArray = [[ktname, ktrgnum, ktsenddate, ktsendcont, ktrecievenum, ktsendnum, ktsendresult, ktsendgb, ktsendnyid]];
+        //     //Logger.log(ktnyArray);
+        //     ktnyst.appendRow(ktnyArray);
+        const response = await sheets.spreadsheets.values.append({
+            spreadsheetId: SHEET_ID,
+            //spreadsheetName: SHEET_NAME,
+            range: RANGE,
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: ktnyArray },
+        });
+        console.log(`ktny 시트에 행이 추가되었습니다.`);
+
+        // const response = await sheets.spreadsheets.values.get({  //sheet get!
+        //   spreadsheetId,
+        //   range: `${sheetName}!${range}`,
+        // });
+
+    } catch (e) {
+
+        console.error(e);
+        var emailsubject = "시트에 추가중 에러발생!!";
+        var emailcontent = "시트에 추가중 에러발생!!\n" +
+
+            "-----error msg-----\n" +
+            e.message + "\n" +
+            "-----error stack-----\n" +
+            e.stack;
+
+        var sendemjson = {
+            to: process.env.sdadminnvml,
+            subject: emailsubject,
+            message: emailcontent
+        }
+        //메일 전송
+        sendemailPr(sendemjson); // 이메일 전송
+    }
+
+}
+
+async function formDateToStr(date) {
+    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dayOfWeek = daysOfWeek[date.getDay()];
+
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? "오후" : "오전";
+    hours = hours % 12 || 12;
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const formattedString = `${year}-${month}-${day}(${dayOfWeek}) ${ampm} ${hours}:${minutes}`;
+    return formattedString;
+}
+
 
 module.exports = { ktsendPr };
