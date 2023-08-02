@@ -199,7 +199,7 @@ async function getRequestParams(tempid, sendjson) {
         tempcontent = tempcontent.replace("#{번호2}", process.env.prktmsgttestnum);
         tempcontent = tempcontent.replace("#{홈페이지주소}", "www.sharpdurm.co.kr");
 
-    } else if (tempid === "sdalertcall1") {  //콜백
+    } else if (tempid === "sdalertcall2") {  //콜백
         to = sendjson.to;
     }
 
