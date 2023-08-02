@@ -61,7 +61,7 @@ app.post('/scrapepost', async(req, res) => {
       sdsendmode: "콜백"
     }
     const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
-    res.send('요청결과코드:'+msgrqrst+"/"+prrqswprphnuo);
+    res.send('요청결과코드:'+msgrqrst+"/"+prrqoknumcv);
     
   } else {
     res.send('잘못된 요청입니다.');
@@ -71,9 +71,9 @@ app.post('/scrapepost', async(req, res) => {
 
 async function LuPhchk(pnb) {
   // 숫자와 '-'를 제외한 모든 문자를 제거합니다.
-  const cleaned = phoneNumber.replace(/\D/g, '');
+  const cleaned = pnb.replace(/\D/g, '');
   if (cleaned.substring(0, 3) !== '010') {
-    return phoneNumber;
+    return pnb;
   }
   if (cleaned.length === 11 && cleaned[3] === '-' && cleaned[8] === '-') {
     return cleaned;
@@ -82,7 +82,7 @@ async function LuPhchk(pnb) {
   if (match) {
     return `${match[1]}-${match[2]}-${match[3]}`;
   }
-  return phoneNumber;
+  return pnb;
 }
 
 app.listen(PORT, () => {
