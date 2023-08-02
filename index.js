@@ -48,7 +48,7 @@ app.post('/scrapepost', async(req, res) => {
 
   if (prrqswchk === process.env.RQSW_ID) {
     const ktsjs = {
-      tonum: process.env.LudestNum,
+      tonum: prrqswprphnuo,
       ktsdname: "",
       apprnum: "",
       date: "",
