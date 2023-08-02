@@ -44,6 +44,7 @@ app.get("/lguptest.php", (req, res) => {
 app.post('/scrapepost', async(req, res) => {
   const { body } = req;
   const prrqswchk = body.prrqsw;  //prphnuo
+  const prrqswprphnuo = body.prphnuo;
 
   if (prrqswchk === process.env.RQSW_ID) {
     const ktsjs = {
@@ -60,7 +61,7 @@ app.post('/scrapepost', async(req, res) => {
       sdsendmode: "콜백"
     }
     const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
-    res.send('요청결과코드:'+msgrqrst);
+    res.send('요청결과코드:'+msgrqrst+"/"+prrqswprphnuo);
     
   } else {
     res.send('잘못된 요청입니다.');
