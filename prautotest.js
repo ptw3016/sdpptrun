@@ -294,7 +294,7 @@ async function startTimer() {
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
                             var ipmonthval = 8;
-                            var ipdayval = "3";
+                            var ipdayval = "5";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";

@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const scrapeLogic = require("./scrapeLogic");
+const fs = require('fs');
 
 require("dotenv").config();
 
@@ -123,6 +124,21 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
             prscinfoname = nyname;
             prscinfophnum = phNumber;
+
+            //신청일시 정렬 XP
+            ////*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button
+            const liXPath7 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
+            const liElement7 = await sdipage.waitForXPath(liXPath7);
+            await liElement7.click();
+
+            await sdipage.waitForTimeout(500);
+
+            const liXPath8 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
+            const liElement8 = await sdipage.waitForXPath(liXPath8);
+            await liElement8.click();
+
+            await sdipage.waitForTimeout(500);
+
         } else {
             console.log("이용내역중 리스트가 없습니다! 종료합니다!");
             //console.log("chkboolean: " + memberinfochk);
