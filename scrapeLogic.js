@@ -44,6 +44,7 @@ const scrapeLogic = async (reqbd, res) => {
     var prdatecv = reqbd.ipyear + "." + numpad(reqbd.ipmonth) + "." + numpad(reqbd.ipdate) + ".";
     var prdatecvwk = await weekdaypr(prdatecv);
     var prbjbt = "미배정";
+    var ktatrstchk = "/";
     var stipVALUES = [
       [
         "예약",
@@ -64,6 +65,7 @@ const scrapeLogic = async (reqbd, res) => {
         reqbd.scgstext,
         reqbd.prscnum,
         reqbd.infochkphnum,
+        ktatrstchk
       ]
     ];
 
@@ -472,7 +474,7 @@ const scrapeLogic = async (reqbd, res) => {
           //res.send(screenshot);
           const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
           const ktsjs = {
-            tonum: process.env.prktmsgttestnum,   //*수정준비 - stipVALUES[0][17],
+            tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
             ktsdname: reqbd.ipname,
             apprnum: bjroomchk,
             date: prdatecvwk,
@@ -483,14 +485,36 @@ const scrapeLogic = async (reqbd, res) => {
             tempid: "sdalertpr2",
             sdsendmode: "연습실"
           }
-
           const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
+
+          const adktsjs = {
+            tonum: process.env.prktmsgttestnum,   //*ad sendmode
+            ktsdname: reqbd.ipname,
+            apprnum: bjroomchk,
+            date: prdatecvwk,
+            time: apprtime,
+            appay: reqbd.ipgjga,
+            appaysd: reqbd.ipgjsd,
+            apbb: "네이버예약",
+            tempid: "sdalertpr2",
+            sdsendmode: "연습실"
+          }
+          const admsgrqrst = await ktMsgSendPr.ktsendPr(adktsjs);
+
           var msgrqval = "";
+          var admsgrqval = "";
           if (msgrqrst == "0000") {
             msgrqval = "전송성공 (code:" + msgrqrst + ")";
           } else {
             msgrqval = "전송실패 (code:" + msgrqrst + ")";  //추후에 문자보내지게
           }
+
+          if (admsgrqrst == "0000") {
+            admsgrqval = "전송성공 (code:" + admsgrqrst + ")";
+          } else {
+            admsgrqval = "전송실패 (code:" + admsgrqrst + ")";  //추후에 문자보내지게
+          }
+
           const sdnumbchk = await bldMidPhNumb(stipVALUES[0][17]); 
           emailsubject = "(제목)예약이 성공적으로 완료되었습니다.!";
           emailcontent = "(본문)예약이 성공적으로 완료되었습니다.!\n" +
@@ -500,7 +524,7 @@ const scrapeLogic = async (reqbd, res) => {
             "/예약일자 : " + prdatecvwk + "\n" +
             "/예약시간 : " + apprtime + "\n" +
             "/예약완료부스 : " + bjroomchk + "\n" +
-            "/메시지 전송결과 : " + msgrqval + "( "+ sdnumbchk+" )\n" +
+            "/메시지 전송결과 : " + msgrqval + "( "+ sdnumbchk + " ) / admin : " + admsgrqval+"\n" +
             "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
 
           stipVALUES[0][2] = bjroomchk;

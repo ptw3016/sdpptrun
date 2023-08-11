@@ -82,13 +82,11 @@ const ktsendPr = async (sjs) => {
     }
 
     var params = await getRequestParams(tempid, sendjson);  //메시지 템플릿 가져오기 - 전송시 템플릿만들고
-
     if (params == "0001") {
         console.log("템플릿 가져오기 실패! 종료합니다.");
         return "template error!";
     }
     const data = JSON.stringify(params);
-
 
     try {
         const response = await axios.post(apiUrl, data, { headers });
