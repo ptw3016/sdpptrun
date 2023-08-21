@@ -50,13 +50,13 @@ async function dolcstatechk(device_id) { //dlcs control - chk
     if (!commands.success) {
         new Error();
     }
-    console.log("Execution result:",commands);
+    //console.log("Execution result:",commands);
     var rststring = "";
-    // if (commands.result[0].value == true) {
-    //     rststring = true;
-    // } else if (commands.result[0].value == false) {
-    //     rststring = false;
-    // }
+    if (commands.result[0].value == true) {
+        rststring = true;
+    } else if (commands.result[0].value == false) {
+        rststring = false;
+    }
     return rststring
 }
 
@@ -66,7 +66,7 @@ async function sctytimebkPr() {
     const targetDaysOfWeek = [0, 1, 2, 3, 4, 5, 6]; //
     const hgDayWeek = ["일", "월", "화", "수", "목", "금", "토"]
     const hour = 21;  // 24시간 형식  
-    const minute = 19;
+    const minute = 35;
 
     // 원하는 요일과 시간에 함수를 실행하도록 스케줄링합니다.
     const rule = new schedule.RecurrenceRule();
@@ -148,10 +148,11 @@ async function rltimestr() {
     const dayOfWeek = daysOfWeek[currentDate.getDay()];
 
     const hour = currentDate.getHours().toString().padStart(2, '0') + 9;
+    let hourcv = parseInt(hour) + 9;
     const minute = currentDate.getMinutes().toString().padStart(2, '0');
     const second = currentDate.getSeconds().toString().padStart(2, '0');
 
-    const formattedDateTime = `${year}-${month}-${day}(${dayOfWeek}) ${hour}:${minute}:${second}`;
+    const formattedDateTime = `${year}-${month}-${day}(${dayOfWeek}) ${hourcv}:${minute}:${second}`;
 
     return formattedDateTime;
 }
