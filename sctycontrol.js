@@ -67,7 +67,7 @@ async function sctytimebkPr() {
     const targetDaysOfWeek = [0, 1, 2, 3, 4, 5, 6]; //
     const hgDayWeek = ["일", "월", "화", "수", "목", "금", "토"]
     const hour = 19 - utccv1; // 24시간 형식  /utccv1은 utc 시간 매칭
-    const minute = 42;
+    const minute = 50;
 
     // 원하는 요일과 시간에 함수를 실행하도록 스케줄링합니다.
     const rule = new schedule.RecurrenceRule();
