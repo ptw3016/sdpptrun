@@ -20,6 +20,7 @@
     "google-auth-library": "^8.8.0",
     "googleapis": "^118.0.0",
     "node-schedule": "^2.1.1",
+    "node-schedule-tz": "^1.2.1-4",
     "nodemailer": "^6.9.1",
     "puppeteer": "^19.11.1",
     "twilio": "^4.12.0"
