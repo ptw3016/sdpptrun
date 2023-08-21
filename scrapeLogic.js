@@ -80,7 +80,7 @@ const scrapeLogic = async (reqbd, res) => {
         "/예약일자 : " + prdatecvwk + "\n" +
         "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n";
 
-      stipVALUES[0][2] = "2시가초과/수동";
+      stipVALUES[0][2] = "2시간초과/수동";
       googlesheetappend(stipVALUES);
       var sendemjson = {
         to: process.env.sdadminnvml,

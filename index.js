@@ -4,6 +4,7 @@ const { scrapeLogic } = require("./scrapeLogic");
 const prautotest = require("./prautotest.js");
 const bodyParser = require('body-parser');
 const ktMsgSendPr = require("./ktMsgSendPr");
+const sctycontrol = require("./sctycontrol");
 
 const PORT = process.env.PORT || 4000;
 //require("dotenv").config();
@@ -88,4 +89,6 @@ async function LuPhchk(pnb) {
 app.listen(PORT, () => {
     prautotest.startTimer();
     console.log(`Listening on port ${PORT}`); 
+    sctycontrol.sctytimebkPr();
+    console.log(`sctycontrol Process Start!!`);
 })
