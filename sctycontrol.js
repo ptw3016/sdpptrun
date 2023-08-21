@@ -79,7 +79,6 @@ async function sctytimebkPr() {
 
     if (job) {
         console.log("sc on!");
-        console.log("sc prtime:", job.nextInvocation());
     } else {
         console.log("sc off!");
     }
