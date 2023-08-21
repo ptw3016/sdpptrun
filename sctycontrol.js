@@ -66,8 +66,8 @@ async function sctytimebkPr() {
     // 월요일과 수요일을 숫자로 매핑합니다 (0: 일요일, 1: 월요일, ..., 6: 토요일).
     const targetDaysOfWeek = [0, 1, 2, 3, 4, 5, 6]; //
     const hgDayWeek = ["일", "월", "화", "수", "목", "금", "토"]
-    const hour = 16; // 24시간 형식
-    const minute = 55;
+    const hour = 17; // 24시간 형식
+    const minute = 6;
 
     // 원하는 요일과 시간에 함수를 실행하도록 스케줄링합니다.
     const rule = new schedule.RecurrenceRule();
@@ -76,6 +76,12 @@ async function sctytimebkPr() {
     rule.minute = minute;
 
     const job = schedule.scheduleJob(rule, sdbgdlchkPr);
+
+    if (job) {
+        console.log("sc on!");
+    } else {
+        console.log("sc off!");
+    }
 }
 
 
