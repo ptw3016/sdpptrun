@@ -23,8 +23,8 @@ async function sdbgdlchkPr() {
     var rstimechk = await rltimestr();
     console.log("sdbg2dlchk start!:" + rstimechk);
 
-    //var dlsensst = await dolcstatechk(tysd2dlsens_id);
-    let dlsensst = "";
+    var dlsensst = await dolcstatechk(tysd2dlsens_id);
+    dlsensst = "";
     let rststring = "";
     //let datestring = hour +":"+s minute;
     if (dlsensst == true) {
@@ -64,8 +64,8 @@ async function sctytimebkPr() {
     // 월요일과 수요일을 숫자로 매핑합니다 (0: 일요일, 1: 월요일, ..., 6: 토요일).
     const targetDaysOfWeek = [0, 1, 2, 3, 4, 5, 6]; //
     const hgDayWeek = ["일", "월", "화", "수", "목", "금", "토"]
-    const hour = 23;  // 24시간 형식  
-    const minute = 0;
+    const hour = 16;  // 24시간 형식  
+    const minute = 2;
 
     // 원하는 요일과 시간에 함수를 실행하도록 스케줄링합니다.
     const rule = new schedule.RecurrenceRule();
@@ -157,7 +157,7 @@ async function rltimestr() {
 }
 
 
-let token = '';
+let tokenty = '';
 let tokenExpireTime = 0;
 
 function encryptStr(str, secret) {
@@ -166,6 +166,7 @@ function encryptStr(str, secret) {
 
 async function getToken() {
   const timestamp = Date.now().toString();
+  console.log("tokentimestamp:"+timestamp);
   const signUrl = '/v1.0/token?grant_type=1';
   const contentHash = crypto.createHash('sha256').update('').digest('hex');
   const stringToSign = ['GET', contentHash, '', signUrl].join('\n');
@@ -185,9 +186,9 @@ async function getToken() {
   try {
     const response = await axios(options);
     if (response.data.success) {
-      token = response.data.result.access_token;
+      tokenty = response.data.result.access_token;
       tokenExpireTime = response.data.result.expire_time;
-      //console.log('Token obtained successfully:', token);
+      console.log('Token obtained successfully:', tokenty);
     } else {
       console.error('Token request failed:', response.data.msg);
     }
@@ -198,6 +199,7 @@ async function getToken() {
 
 async function callTyApi(method, path, params, data) {
     const timestamp = Date.now().toString();
+    console.log("calltyapitimestamp:"+timestamp);
     const sortedParams = {};
     Object.keys(params)
       .sort()
@@ -207,7 +209,7 @@ async function callTyApi(method, path, params, data) {
   
     const contentHash = crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
     const stringToSign = [method, contentHash, '', url].join('\n');
-    const signStr = accessKey + token + timestamp + stringToSign;
+    const signStr = accessKey + tokenty + timestamp + stringToSign;
     const sign = encryptStr(signStr, secretKey);
     const headers = {
       t: timestamp,
@@ -215,7 +217,7 @@ async function callTyApi(method, path, params, data) {
       client_id: accessKey,
       sign: sign,
       sign_method: 'HMAC-SHA256',
-      access_token: token,
+      access_token: tokenty,
     };
     const options = {
       method: method,
