@@ -46,7 +46,7 @@ async function sdbgdlchkPr() {
 }
 
 async function dolcstatechk(device_id) { //dlcs control - chk
-    await getToken();
+    await tygetToken();
     const device_rst = await callTyApi('GET', `/v1.0/iot-03/devices/${device_id}/status`, {}, {});
     console.log(device_rst);
 
@@ -164,7 +164,7 @@ function encryptStr(str, secret) {
   return crypto.createHmac('sha256', secret).update(str, 'utf8').digest('hex').toUpperCase();
 }
 
-async function getToken() {
+async function tygetToken() {
   const timestamp = Date.now().toString();
   console.log("tokentimestamp:"+timestamp);
   const signUrl = '/v1.0/token?grant_type=1';
@@ -234,7 +234,7 @@ async function callTyApi(method, path, params, data) {
         if (response.data.code === 1010 || response.data.code === 1011) {
           // 토큰 만료 또는 무효일 경우, 새로운 토큰 요청
           console.log('Token expired or invalid, requesting a new one...');
-          await getToken();
+          await tygetToken();
           // 재귀적으로 API 호출 함수 다시 실행
           return callTyApi(method, path, params, data);
         } else {
