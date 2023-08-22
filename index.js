@@ -89,6 +89,6 @@ async function LuPhchk(pnb) {
 app.listen(PORT, () => {
     prautotest.startTimer();
     console.log(`Listening on port ${PORT}`); 
-    sctycontrol.sctytimebkPr();
-    console.log(`sctycontrol Process Start!!`);
+    //sctycontrol.sctytimebkPr();
+    //console.log(`sctycontrol Process Start!!`);
 })
