@@ -24,7 +24,7 @@ async function sdbgdlchkPr() {
     console.log("sdbg2dlchk start!:" + rstimechk);
 
     var dlsensst = await dolcstatechk(tysd2dlsens_id);
-    dlsensst = "";
+    //dlsensst = "";
     let rststring = "";
     //let datestring = hour +":"+s minute;
     if (dlsensst == true) {
@@ -65,7 +65,7 @@ async function sctytimebkPr() {
     const targetDaysOfWeek = [0, 1, 2, 3, 4, 5, 6]; //
     const hgDayWeek = ["일", "월", "화", "수", "목", "금", "토"]
     const hour = 17;  // 24시간 형식  
-    const minute = 1;
+    const minute = 53;
 
     // 원하는 요일과 시간에 함수를 실행하도록 스케줄링합니다.
     const rule = new schedule.RecurrenceRule();
