@@ -73,8 +73,8 @@ const scrapeLogic = async (reqbd, res) => {
     if (timeDiff > 2) {
       console.log("It will end after more than 2 hours.");
 
-      emailsubject = "(제목)신청시간이 2시간 초과여서 종료합니다! 방을 직접 잡아주세요! 추후 자동예정";
-      emailcontent = "(본문)신청시간이 2시간 초과여서 종료합니다! 방을 직접 잡아주세요! 추후 자동예정\n" +
+      emailsubject = "(Lab연습실)신청시간이 2시간 초과여서 종료합니다! 방을 직접 잡아주세요! 추후 자동예정";
+      emailcontent = "(Lab연습실)신청시간이 2시간 초과여서 종료합니다! 방을 직접 잡아주세요! 추후 자동예정\n" +
         "----reqbd----\n" +
         "/예약자명 : " + reqbd.ipname + "\n" +  //name
         "/예약일자 : " + prdatecvwk + "\n" +
@@ -253,7 +253,6 @@ const scrapeLogic = async (reqbd, res) => {
 
           await page.waitForSelector('.am');
 
-
           if (timegb == "오전") {
             var div2 = await page.$('div.am');
           } else if (timegb == "오후") {
@@ -331,8 +330,8 @@ const scrapeLogic = async (reqbd, res) => {
             //res.send('원하는 방이 없습니다 종료합니다!');
             console.log("There is no room. Exit the program!");
 
-            emailsubject = "(제목)예약가능한 방이 없습니다 종료합니다!";
-            emailcontent = "(본문)예약가능한 방이 없습니다 종료합니다!\n" +
+            emailsubject = "(Lab연습실)예약가능한 방이 없습니다 종료합니다!";
+            emailcontent = "(Lab연습실)예약가능한 방이 없습니다 종료합니다!\n" +
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
@@ -404,8 +403,8 @@ const scrapeLogic = async (reqbd, res) => {
 
           if (prtimechk != true) {
 
-            emailsubject = "(제목)예약가능한 방이 없는것 같습니다. 예약시간이 선택이 안됩니다.";
-            emailcontent = "(본문)예약가능한 방이 없는것 같습니다. 예약시간이 선택이 안됩니다.\n" +
+            emailsubject = "(Lab연습실)예약가능한 방이 없는것 같습니다. 예약시간이 선택이 안됩니다.";
+            emailcontent = "(Lab연습실)예약가능한 방이 없는것 같습니다. 예약시간이 선택이 안됩니다.\n" +
 
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
@@ -427,7 +426,6 @@ const scrapeLogic = async (reqbd, res) => {
           }
 
 
-
           //console.log("최종시간선택 확정 클릭");
           const liXPathsrfnl2 = '//*[@id="container"]/bk-freetime/div[2]/bk-select-time-schedule/div/div[3]/button';
           const liElementsrfnl2 = await page.waitForXPath(liXPathsrfnl2);
@@ -444,101 +442,135 @@ const scrapeLogic = async (reqbd, res) => {
           const liXPathsrfngo = '//*[@id="container"]/bk-freetime/div[2]/div[2]/bk-submit/div/button';
           const liElementsrfngo = await page.waitForXPath(liXPathsrfngo);
           await liElementsrfngo.click();
-
+          
+          //await page.waitForTimeout(1000);
+          // const screenshot = await page.screenshot({ fullPage: true });
+          // fs.writeFileSync('screenshot.png', screenshot);
           //console.log("예약완료화면 기다리기");
-          await page.waitForXPath('//*[@id="container"]/bk-freetime/div[2]/div[2]/bk-submit/bk-notify-popup/div/div[2]/div/strong');
-          //console.log("예약완료화면 확인!");
-          // Get the strong element
+          await page.waitForXPath('//*[@id="root"]/div[3]/div[2]/div[2]/div[2]/div/strong');
+          let extractedText = "";
+          try {
+            extractedText = await page.$eval('.popup_tit', (el) => el.innerText);
+            //console.log("**메시지 출력확인:"+extractedText); // 예약 완료 메시지 확인
+          } catch (e) {
+            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!";
+            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!\n" +
+              "*마지막 완료메시지 디버그 확인요망!\n" +
+              "----reqbd----\n" +
+              "/예약자명 : " + reqbd.ipname + "\n" +  //name
+              "/예약일자 : " + prdatecvwk + "\n" +
+              "/예약시간 : " + apprtime + "\n" +
+              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
 
-          const isBookingConfirmed = await page.evaluate(() => {
-            const text1 = "예약이";
-            const text2 = "확정되었습니다";
-            const elements = document.querySelectorAll('.payment_layer strong.title');
-            for (const element of elements) {
-              if (element.textContent.includes(text1) && element.textContent.includes(text2)) {
-                return true;
-              }
+            stipVALUES[0][2] = "확정메시지X/예약에러";
+            googlesheetappend(stipVALUES);
+
+            var sendemjson = {
+              to: process.env.sdadminnvml,
+              subject: emailsubject,
+              message: emailcontent
             }
-            return false;
-          });
-
-          if (isBookingConfirmed) {
-            console.log("예약이 확정되었습니다.");
-            // 여기에서 필요한 작업 수행
-          } else {
-            console.log("예약이 확정되지 않았습니다.");
+            //메일 전송
+            sendemailPr(sendemjson); // 이메일 전송
+            return { rqcode: "0000", prresultcode: "0006", prsultreson: "Booking confirmation message error1" };
           }
+
 
           await browser.close();
-          //res.set('Content-Type', 'image/png');
-          //res.send(screenshot);
-          const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
-          const ktsjs = {
-            tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
-            ktsdname: reqbd.ipname,
-            apprnum: bjroomchk,
-            date: prdatecvwk,
-            time: apprtime,
-            appay: reqbd.ipgjga,
-            appaysd: reqbd.ipgjsd,
-            apbb: "네이버예약",
-            tempid: "sdalertpr2",
-            sdsendmode: "연습실"
-          }
-          const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
 
-          const adktsjs = {
-            tonum: process.env.prktmsgttestnum,   //*ad sendmode
-            ktsdname: reqbd.ipname,
-            apprnum: bjroomchk,
-            date: prdatecvwk,
-            time: apprtime,
-            appay: reqbd.ipgjga,
-            appaysd: reqbd.ipgjsd,
-            apbb: "네이버예약",
-            tempid: "sdalertpr2",
-            sdsendmode: "연습실"
-          }
-          const admsgrqrst = await ktMsgSendPr.ktsendPr(adktsjs);
+          if (extractedText.indexOf("예약이 확정되었습니다") != -1) {
+            console.log("예약확정 메시지 확인!.");
+            const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
+            const ktsjs = {
+              tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
+              ktsdname: reqbd.ipname,
+              apprnum: bjroomchk,
+              date: prdatecvwk,
+              time: apprtime,
+              appay: reqbd.ipgjga,
+              appaysd: reqbd.ipgjsd,
+              apbb: "네이버예약",
+              tempid: "sdalertpr2",
+              sdsendmode: "연습실"
+            }
+            const msgrqrst = await ktMsgSendPr.ktsendPr(ktsjs);
 
-          var msgrqval = "";
-          var admsgrqval = "";
-          if (msgrqrst == "0000") {
-            msgrqval = "전송성공 (code:" + msgrqrst + ")";
+            const adktsjs = {
+              tonum: process.env.prktmsgttestnum,   //*ad sendmode
+              ktsdname: reqbd.ipname,
+              apprnum: bjroomchk,
+              date: prdatecvwk,
+              time: apprtime,
+              appay: reqbd.ipgjga,
+              appaysd: reqbd.ipgjsd,
+              apbb: "네이버예약",
+              tempid: "sdalertpr2",
+              sdsendmode: "연습실"
+            }
+            const admsgrqrst = await ktMsgSendPr.ktsendPr(adktsjs);
+
+            var msgrqval = "";
+            var admsgrqval = "";
+            if (msgrqrst == "0000") {
+              msgrqval = "전송성공 (code:" + msgrqrst + ")";
+            } else {
+              msgrqval = "전송실패 (code:" + msgrqrst + ")";  //추후에 문자보내지게
+            }
+
+            if (admsgrqrst == "0000") {
+              admsgrqval = "전송성공 (code:" + admsgrqrst + ")";
+            } else {
+              admsgrqval = "전송실패 (code:" + admsgrqrst + ")";  //추후에 문자보내지게
+            }
+
+            const sdnumbchk = await bldMidPhNumb(stipVALUES[0][17]);
+            emailsubject = "(Lab연습실)예약이 성공적으로 완료되었습니다.!";
+            emailcontent = "(Lab연습실)예약이 성공적으로 완료되었습니다.!\n" +
+              "*혹시 셀프예약 회원이면 중복예약일 수 있으니 예약을 취소해주세요!\n" +
+              "----reqbd----\n" +
+              "/예약자명 : " + reqbd.ipname + "\n" +  //name
+              "/예약일자 : " + prdatecvwk + "\n" +
+              "/예약시간 : " + apprtime + "\n" +
+              "/예약완료부스 : " + bjroomchk + "\n" +
+              "/메시지 전송결과 : " + msgrqval + "( " + sdnumbchk + " ) / admin : " + admsgrqval + "\n" +
+              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
+
+            stipVALUES[0][2] = bjroomchk;
+            googlesheetappend(stipVALUES);
+
+            var sendemjson = {
+              to: process.env.sdadminnvml,
+              subject: emailsubject,
+              message: emailcontent
+            }
+            //메일 전송
+            sendemailPr(sendemjson); // 이메일 전송
+
+            return { rqcode: "0000", prresultcode: "0000", prsultreson: "Booking Success!!" };
           } else {
-            msgrqval = "전송실패 (code:" + msgrqrst + ")";  //추후에 문자보내지게
+            console.log("예약이 확정 메시지 확인안됨!.");
+            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!";
+            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!\n" +
+              "*마지막 완료메시지 디버그 확인요망!\n" +
+              "----reqbd----\n" +
+              "/예약자명 : " + reqbd.ipname + "\n" +  //name
+              "/예약일자 : " + prdatecvwk + "\n" +
+              "/예약시간 : " + apprtime + "\n" +
+              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
+
+            stipVALUES[0][2] = "확정메시지X/예약에러";
+            googlesheetappend(stipVALUES);
+
+            var sendemjson = {
+              to: process.env.sdadminnvml,
+              subject: emailsubject,
+              message: emailcontent
+            }
+            //메일 전송
+            sendemailPr(sendemjson); // 이메일 전송
+            return { rqcode: "0000", prresultcode: "0007", prsultreson: "Booking confirmation message error2" };
           }
 
-          if (admsgrqrst == "0000") {
-            admsgrqval = "전송성공 (code:" + admsgrqrst + ")";
-          } else {
-            admsgrqval = "전송실패 (code:" + admsgrqrst + ")";  //추후에 문자보내지게
-          }
-
-          const sdnumbchk = await bldMidPhNumb(stipVALUES[0][17]); 
-          emailsubject = "(제목)예약이 성공적으로 완료되었습니다.!";
-          emailcontent = "(본문)예약이 성공적으로 완료되었습니다.!\n" +
-            "*혹시 셀프예약 회원이면 중복예약일 수 있으니 예약을 취소해주세요!\n" +
-            "----reqbd----\n" +
-            "/예약자명 : " + reqbd.ipname + "\n" +  //name
-            "/예약일자 : " + prdatecvwk + "\n" +
-            "/예약시간 : " + apprtime + "\n" +
-            "/예약완료부스 : " + bjroomchk + "\n" +
-            "/메시지 전송결과 : " + msgrqval + "( "+ sdnumbchk + " ) / admin : " + admsgrqval+"\n" +
-            "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
-
-          stipVALUES[0][2] = bjroomchk;
-          googlesheetappend(stipVALUES);
-
-          var sendemjson = {
-            to: process.env.sdadminnvml,
-            subject: emailsubject,
-            message: emailcontent
-          }
-          //메일 전송
-          sendemailPr(sendemjson); // 이메일 전송
-
-          return { rqcode: "0000", prresultcode: "0000", prsultreson: "Booking Success!!" };
         }
       }
 
@@ -549,8 +581,8 @@ const scrapeLogic = async (reqbd, res) => {
 
     await browser.close();
     console.error(e);
-    var emailsubject = "(제목)예약 중 에러가 떳습니다.!";
-    var emailcontent = "(본문)예약 중 에러가 떳습니다.!\n" +
+    var emailsubject = "(Lab연습실)예약 중 에러가 떳습니다.!";
+    var emailcontent = "(Lab연습실)예약 중 에러가 떳습니다.!\n" +
       "-----error msg-----\n" +
       e.message + "\n" +
       "-----error stack-----\n" +

@@ -201,8 +201,8 @@ async function startTimer() {
                             var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
                             if (infochkerrt == "0001") {
                                 //console.log("신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.");
-                                emailsubject = "(제목)이용자 정보는 확인되었으나 셀프모드입니다.";
-                                emailcontent = "(본문)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
+                                emailsubject = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.";
+                                emailcontent = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
                                     "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
@@ -214,8 +214,8 @@ async function startTimer() {
                                 VALUES[0][2] = "셀프모드/미배정";
 
                             } else if (infochkerrt == "0002") {
-                                emailsubject = "(제목)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!";
-                                emailcontent = "(본문)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!\n" +
+                                emailsubject = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!";
+                                emailcontent = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
                                     "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
@@ -294,7 +294,7 @@ async function startTimer() {
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
                             var ipmonthval = 8;
-                            var ipdayval = "5";
+                            var ipdayval = "30";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";

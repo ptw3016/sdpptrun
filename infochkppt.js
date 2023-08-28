@@ -145,8 +145,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             // console.log(minfochkname);
             // console.log(minfochkphnum);
 
-            emailsubject = "(제목)이용내역중 조회된 리스트가 없습니다! 종료합니다!";
-            emailcontent = "(본문)이용내역중 조회된 리스트가 없습니다! 종료합니다!\n" +
+            emailsubject = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!";
+            emailcontent = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!\n" +
                
                 "----reqbd----\n" +
                 "/이용내역 조회갯수 : " + elements.length;
@@ -165,8 +165,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         if (nyname == "" || phNumber == "") {
             console.log("이용내역 조회는 완료했으나 가져온 데이터가 널값입니다!");
             console.log("chkboolean: " + memberinfochk);
-            emailsubject = "(제목)이용내역 조회는 완료했으나 가져온 데이터가 널값입니다!";
-            emailcontent = "(본문)이용내역 조회는 완료했으나 가져온 데이터가 널값입니다!\n" +
+            emailsubject = "(Lab연습실)이용내역 조회는 완료했으나 가져온 데이터가 널값입니다!";
+            emailcontent = "(Lab연습실)이용내역 조회는 완료했으나 가져온 데이터가 널값입니다!\n" +
                 "----reqbd----\n" +
                 "/신청자명 : " + nyname + "\n" +
                 "/신청자phnum : " + phNumber;
