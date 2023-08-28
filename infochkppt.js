@@ -219,6 +219,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 minfochkphnum = prscinfophnum;
                 memberinfochk = true;
                 minfochkself = values[i][15];
+                break;
             }
         }
 
