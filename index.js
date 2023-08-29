@@ -30,7 +30,11 @@ app.use(bodyParser.json());
 //     }
 // });
 app.get("/", (req, res) => {
-  res.send("ppt 구동 준비완료!");
+  //res.send("ppt 구동 준비완료!");
+});
+
+app.get("/hejapi", (req, res) => {
+  res.send("hej연동준비!");
 });
 
 app.get("/lguptest.php", (req, res) => {
