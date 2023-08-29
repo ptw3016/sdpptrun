@@ -84,7 +84,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         var elementsct = elements.length;
         //elementsct = 0;
         var runct = 0;
-        if (elementsct==0) {
+        if (elementsct == 0) {
             for (var i = 0; i < 3; i++) {
                 runct += 1;
                 console.log("조회된 이용내역 0이므로 " + runct + "번째 다시실행!");
@@ -97,7 +97,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 await sdipage.waitForTimeout(1000);
             }
         }
-        if(runct==3 && elementsct==0){
+        if (runct == 3 && elementsct == 0) {
             console.log("이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!");
             emailsubject = "이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!";
             emailcontent = "이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!\n" +
@@ -111,10 +111,10 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             }
             //메일 전송
             await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode:"" }
+            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
         }
 
-    
+
         if (elements.length > 0) {
             const lastElement = elements[elements.length - 1]; //제일 최근 예약자 정보 가져오기
             const nameElement = await lastElement.$('.BookingListView__name__16_zV');
@@ -147,7 +147,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
             emailsubject = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!";
             emailcontent = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!\n" +
-               
+
                 "----reqbd----\n" +
                 "/이용내역 조회갯수 : " + elements.length;
 
@@ -158,7 +158,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             }
             //메일 전송
             await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode:"" }
+            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
         }
 
 
@@ -178,7 +178,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             }
             //메일 전송
             await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode:"" }
+            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
         }
 
         // //스프레드시트 ID, 시트 이름, 가져올 범위를 설정합니다.
@@ -223,46 +223,44 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             }
         }
 
-        if (memberinfochk == true && minfochkself!="selfon") {
+        if (memberinfochk == true && minfochkself != "selfon") {
             console.log("chkboolean: " + memberinfochk);
-            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode:"0000" }
-        } else if(memberinfochk == true && minfochkself=="selfon"){
+            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode: "0000" }
+        } else if (memberinfochk == true && minfochkself == "selfon") {
             console.log("chkboolean: " + memberinfochk);
             // console.log("이용자 정보는 확인되었으나 셀프모드입니다.");
-            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode:"0001" }
-        }else {
+            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode: "0001" }
+        } else {
             //console.log("일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!");
             console.log("chkboolean: " + memberinfochk);
-            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode:"0002" }
+            var emailsubject = "infochkppt에서 회원확인안됨!!";
+            var emailcontent = "infochkppt에서 회원확인안됨!!\n" +
+                "----확인내용----\n" +
+                "*예약내역nm : " + prscinfoname + "\n" +
+                "*이용회원nm : " + chkname + "\n" +
+                "*예약내역cp : " + prscinfophnum + "\n" +
+                "---------------\n" +
+                "신규가 맞는지도 확인해보기!";
+
+            var sendemjson = {
+                to: process.env.sdadminnvml,
+                subject: emailsubject,
+                message: emailcontent
+            }
+            //메일 전송
+            scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
+            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode: "0002" }
         }
 
-        // for (const element of elements) {
-        //   const nameElement = await element.$('.BookingListView__name__16_zV');
-        //   const name = await sdipage.evaluate((el) => el.textContent, nameElement);
-        //   console.log(name);
-        //   if (name === '홍길동') { //유료 예약자 이름
-        //     const phoneElement = await element.$('.BookingListView__phone__2IoIp');
-        //     const phoneNumber = await sdipage.evaluate((el) => el.textContent, phoneElement);
-        //     console.log(phoneNumber);
-        //     //break; 원하는 이름을 찾은 후 반복문을 중지하려면 이 줄을 추가하세요.
-        //   }
-        // }
-
-        // // 스크린샷 찍기
-        // const screenshotBuffer = await sdipage.screenshot();
-
-        // // 스크린샷을 응답으로 보내기
-        // res.set('Content-Type', 'image/png');
-        // res.send(screenshotBuffer);
 
     } catch (e) {
-      
+
         console.error(e);
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
 
             "----reqbd----\n" +
-            "/\n"+
+            "/\n" +
             "-----error msg-----\n" +
             e.message + "\n" +
             "-----error stack-----\n" +
