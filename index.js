@@ -5,11 +5,12 @@ const prautotest = require("./prautotest.js");
 const bodyParser = require('body-parser');
 const ktMsgSendPr = require("./ktMsgSendPr");
 const sctycontrol = require("./sctycontrol");
+const cors = require('cors');
 
 const PORT = process.env.PORT || 4000;
 //require("dotenv").config();
 
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
