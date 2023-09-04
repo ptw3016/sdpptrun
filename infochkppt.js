@@ -116,28 +116,31 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
 
         if (elements.length > 0) {
-            const lastElement = elements[elements.length - 1]; //제일 최근 예약자 정보 가져오기
-            const nameElement = await lastElement.$('.BookingListView__name__16_zV');
-            var nyname = await sdipage.evaluate((el) => el.textContent, nameElement);
-            const phElement = await lastElement.$('.BookingListView__phone__2IoIp');
-            var phNumber = await sdipage.evaluate((el) => el.textContent, phElement);
-
-            prscinfoname = nyname;
-            prscinfophnum = phNumber;
-
-            //신청일시 정렬 XP
+            //신청일시 정렬 XP ------start
             ////*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button
             const liXPath7 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
             const liElement7 = await sdipage.waitForXPath(liXPath7);
             await liElement7.click();
-
             await sdipage.waitForTimeout(500);
-
             const liXPath8 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
             const liElement8 = await sdipage.waitForXPath(liXPath8);
             await liElement8.click();
-
+            await sdipage.waitForTimeout(100);
+            //신청일시 정렬 XP ------ end
+            
+            const lastElement = elements[0]; //제일 최근 예약자 정보 가져오기
+            const nameElement = await lastElement.$('.BookingListView__name__16_zV');
+            var nyname = await sdipage.evaluate((el) => el.textContent, nameElement);
+            const phElement = await lastElement.$('.BookingListView__phone__2IoIp');
+            var phNumber = await sdipage.evaluate((el) => el.textContent, phElement);
+            prscinfoname = nyname;
+            prscinfophnum = phNumber;
             await sdipage.waitForTimeout(500);
+            // console.log("수정중nm:" + prscinfoname);
+            // console.log("수정중ph:" + prscinfophnum);
+            // const screenshot = await sdipage.screenshot({ fullPage: true });
+            //스크린샷 저장
+            // fs.writeFileSync('screenshot.png', screenshot);
 
         } else {
             console.log("이용내역중 리스트가 없습니다! 종료합니다!");

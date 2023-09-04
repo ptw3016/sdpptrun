@@ -125,6 +125,7 @@ async function startTimer() {
                             infochkerrt = "0000";
                         } else {
                             var infochkrt = await infochkppt.sdprgetinfo();
+                            
                             //mifcrtcode 결과로 오류이메일 전송 준비!,시트추가도 준비!
                             
                             if (infochkrt.memberinfochk == true && infochkrt.mifcrtcode == "0000") {
@@ -140,9 +141,8 @@ async function startTimer() {
                             }
                         }
 
-                       
-
                         var prjson = await googleemailmsgget(messages[i].id);  //실사용
+                        
                         if (prjson == "") {
                             continue;
                         }
@@ -200,7 +200,6 @@ async function startTimer() {
                             var emailcontent = "";
                             var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
                             if (infochkerrt == "0001") {
-                                //console.log("신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.");
                                 emailsubject = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.";
                                 emailcontent = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
                                     "----reqbd----\n" +
