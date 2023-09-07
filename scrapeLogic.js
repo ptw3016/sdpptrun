@@ -43,6 +43,7 @@ const scrapeLogic = async (reqbd, res) => {
     //console.log(typeof timeDiff); // 시간 간격 출력
     var prdatecv = reqbd.ipyear + "." + numpad(reqbd.ipmonth) + "." + numpad(reqbd.ipdate) + ".";
     var prdatecvwk = await weekdaypr(prdatecv);
+    const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
     var prbjbt = "미배정";
     var ktatrstchk = "/";
     var stipVALUES = [
@@ -78,7 +79,7 @@ const scrapeLogic = async (reqbd, res) => {
         "----reqbd----\n" +
         "/예약자명 : " + reqbd.ipname + "\n" +  //name
         "/예약일자 : " + prdatecvwk + "\n" +
-        "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n";
+        "/예약시간 : " + apprtime + "\n";
 
       stipVALUES[0][2] = "2시간초과/수동";
       googlesheetappend(stipVALUES);
@@ -335,7 +336,7 @@ const scrapeLogic = async (reqbd, res) => {
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
-              "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n";
+              "/예약시간 : " + apprtime + "\n";
 
             var sendemjson = {
               to: process.env.sdadminnvml,
@@ -409,7 +410,7 @@ const scrapeLogic = async (reqbd, res) => {
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
-              "/예약시간 : " + reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2 + "\n";
+              "/예약시간 : " + apprtime + "\n";
 
             var sendemjson = {
               to: process.env.sdadminnvml,
@@ -442,7 +443,7 @@ const scrapeLogic = async (reqbd, res) => {
           const liXPathsrfngo = '//*[@id="container"]/bk-freetime/div[2]/div[2]/bk-submit/div/button';
           const liElementsrfngo = await page.waitForXPath(liXPathsrfngo);
           await liElementsrfngo.click();
-          
+
           //await page.waitForTimeout(1000);
           // const screenshot = await page.screenshot({ fullPage: true });
           // fs.writeFileSync('screenshot.png', screenshot);
@@ -480,7 +481,6 @@ const scrapeLogic = async (reqbd, res) => {
 
           if (extractedText.indexOf("예약이 확정되었습니다") != -1) {
             console.log("예약확정 메시지 확인!.");
-            const apprtime = reqbd.timegb + " " + reqbd.iptime + " - " + reqbd.timegb2 + " " + reqbd.iptime2;
             const ktsjs = {
               tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
               ktsdname: reqbd.ipname,
