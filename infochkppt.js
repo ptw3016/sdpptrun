@@ -127,8 +127,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             await liElement8.click();
             await sdipage.waitForTimeout(100);
             //신청일시 정렬 XP ------ end
-            
-            const lastElement = elements[0]; //제일 최근 예약자 정보 가져오기
+
+            const lastElement = elements[elements.length - 1]; //제일 최근 예약자 정보 가져오기
             const nameElement = await lastElement.$('.BookingListView__name__16_zV');
             var nyname = await sdipage.evaluate((el) => el.textContent, nameElement);
             const phElement = await lastElement.$('.BookingListView__phone__2IoIp');
