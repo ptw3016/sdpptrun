@@ -150,6 +150,8 @@ async function startTimer() {
                         var prscdatejson = await prdtcovDate(prusedateext.ipdatedt);
 
                         var chknameprrt = await blindnamechkPr(infochkname, prjson.prscname);
+                        console.log("infochkname:"+infochkname);
+                        console.log("prjson.prscname:"+prjson.prscname);
 
                         var chknrst = chknameprrt.chknameresult;
 
@@ -292,8 +294,8 @@ async function startTimer() {
                         }
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
-                            var ipmonthval = 8;
-                            var ipdayval = "30";
+                            var ipmonthval = 9;
+                            var ipdayval = "17";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";

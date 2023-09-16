@@ -296,25 +296,25 @@ const scrapeLogic = async (reqbd, res) => {
           await liElementsrfnl.click();
           await page.waitForTimeout(1000);
 
-          var liElements = await page.$$('ul.lst_item_box > li.item');
-
+          //var liElements = await page.$$('ul.lst_item_box > li.item');
+          const liElements = await page.$$('ul.lst_item_box > li.item');
           var prroomchkArray = [
             process.env.SdBtName1,
             process.env.SdBtName2,
             process.env.SdBtName3
           ];
 
-
           var roomchk = false;
           var bjroomchk = "";
           if (liElements.length != 0) {
             outerLoop: for (var s = 0; s < prroomchkArray.length; s++) {
               for (let liElement of liElements) {
-                const scroomtitle = await page.evaluate(el => el.querySelector('a.lnk_item_book').getAttribute('title'), liElement);
+                const titleElement = await liElement.$('h4.tit span.item_txt_tit');
+                const scroomtitle = await page.evaluate(titleElement => titleElement.textContent, titleElement);
                 //console.log("검색된 연습실명:" + scroomtitle);
                 if (scroomtitle === prroomchkArray[s]) {
                   //console.log("원하는 방 클릭준비");
-                  var aElement = await liElement.$('a[title="' + prroomchkArray[s] + '"]');
+                  var aElement = await liElement.$('a[title="예약"][data-tst_item_link="1"]');
                   await aElement.click();
                   //console.log("원하는 방 클릭완료");
                   roomchk = true;
@@ -324,7 +324,8 @@ const scrapeLogic = async (reqbd, res) => {
               }
             }
           }
-
+          // const screenshot = await page.screenshot({ fullPage: true });
+          // fs.writeFileSync('screenshot.png', screenshot);y
 
           if (roomchk == false) {
             await browser.close();
