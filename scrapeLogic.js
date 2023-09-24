@@ -451,6 +451,8 @@ const scrapeLogic = async (reqbd, res) => {
           //console.log("예약완료화면 기다리기");
           await page.waitForXPath('//*[@id="root"]/div[3]/div[2]/div[2]/div[2]/div/strong');
           let extractedText = "";
+          await page.waitForTimeout(500);
+          
           try {
             extractedText = await page.$eval('.popup_tit', (el) => el.innerText);
             //console.log("**메시지 출력확인:"+extractedText); // 예약 완료 메시지 확인
