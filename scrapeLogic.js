@@ -114,7 +114,11 @@ const scrapeLogic = async (reqbd, res) => {
     await page.setViewport({ width: 1920, height: 1080 });
 
     await page.goto(process.env.NvBk_SiteUrl, { waitUntil: 'networkidle2' });
+
+    const lasttextpath = '//*[@id="container"]/div/div/div[1]/div[2]/div[5]/div/p';
+    await page.waitForXPath(lasttextpath);
     //console.log('로그인버튼 클릭!');
+
     const liXPathlg = '//*[@id="gnb_login_button"]/span[3]';
     const liElementlg = await page.waitForXPath(liXPathlg);
     await liElementlg.click();
@@ -452,19 +456,46 @@ const scrapeLogic = async (reqbd, res) => {
           await page.waitForXPath('//*[@id="root"]/div[3]/div[2]/div[2]/div[2]/div/strong');
           let extractedText = "";
           await page.waitForTimeout(500);
-          
+          let extText = "";
+          let product = "";
+          let isScheduleMatching = false;
           try {
             extractedText = await page.$eval('.popup_tit', (el) => el.innerText);
-            //console.log("**메시지 출력확인:"+extractedText); // 예약 완료 메시지 확인
+
+            const xclosepath = '//*[@id="root"]/div[3]/div[2]/div[2]/div[1]/a/i';
+            const xclosepathgo = await page.waitForXPath(xclosepath);
+            await xclosepathgo.click();
+            await page.waitForTimeout(500);
+
+            // Puppeteer를 사용하여 <h3> 요소 내의 텍스트를 추출합니다.
+            extText = await page.evaluate(() => {
+              const element = document.querySelector('h3.confirm_title span.title_text');
+              return element.textContent;
+            });
+            //console.log("확정메시지:" + extText);
+
+            product = await page.evaluate(() => {
+              const element = document.querySelector('h4.tit a.anchor');
+              return element.textContent;
+            });
+            //console.log("확정상품:" + product);
+
+            const bookedDate = await page.$eval('.booked_date', (element) => element.textContent);
+
+            // console.log("확정일정:"+bookedDate);
+            // console.log("신청날짜:"+prdatecvwk);
+            // console.log("신청시간:"+apprtime);
+
+            isScheduleMatching = await checkSchedule(prdatecvwk, apprtime, bookedDate);
+
           } catch (e) {
-            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!";
-            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!\n" +
-              "*마지막 완료메시지 디버그 확인요망!\n" +
+            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 [완료페이지] 확인안됨!";
+            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 [완료페이지] 확인안됨!\n" +
+              "*마지막 [완료페이지] 디버그 확인요망!\n" +
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
-              "/예약시간 : " + apprtime + "\n" +
-              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
+              "/예약시간 : " + apprtime + "\n";
 
             stipVALUES[0][2] = "확정메시지X/예약에러";
             googlesheetappend(stipVALUES);
@@ -479,11 +510,10 @@ const scrapeLogic = async (reqbd, res) => {
             return { rqcode: "0000", prresultcode: "0006", prsultreson: "Booking confirmation message error1" };
           }
 
-
           await browser.close();
 
-          if (extractedText.indexOf("예약이 확정되었습니다") != -1) {
-            console.log("예약확정 메시지 확인!.");
+          if (extText.indexOf("예약 확정") != -1 && isScheduleMatching == true) {
+            //console.log("예약확정 메시지 확인!.");
             const ktsjs = {
               tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
               ktsdname: reqbd.ipname,
@@ -536,8 +566,8 @@ const scrapeLogic = async (reqbd, res) => {
               "/예약시간 : " + apprtime + "\n" +
               "/예약완료부스 : " + bjroomchk + "\n" +
               "/메시지 전송결과 : " + msgrqval + "( " + sdnumbchk + " ) / admin : " + admsgrqval + "\n" +
-              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
-
+              "/isScheduleMatching : " + isScheduleMatching;
+              
             stipVALUES[0][2] = bjroomchk;
             googlesheetappend(stipVALUES);
 
@@ -551,17 +581,22 @@ const scrapeLogic = async (reqbd, res) => {
 
             return { rqcode: "0000", prresultcode: "0000", prsultreson: "Booking Success!!" };
           } else {
-            console.log("예약이 확정 메시지 확인안됨!.");
-            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!";
-            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 완료메시지 확인안됨!\n" +
-              "*마지막 완료메시지 디버그 확인요망!\n" +
+
+            emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 확인이 안됨!";
+            emailcontent = "(Lab연습실)예약과정은 완료되었으나 마지막 확인이 안됨!\n" +
+              "*마지막 완료 디버그 확인요망!\n" +
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
               "/예약시간 : " + apprtime + "\n" +
-              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!";
+              "/예약신청부스 : " + bjroomchk + "\n" +
+              "/예약클릭시간 : 1st['" + iptime + "'], 2nd['" + iptime2cv + "'] <-제대로 클릭되었는지 확인해보기!" + "\n" +
+              "------------" + "\n" +
+              "isScheduleMatching : " + isScheduleMatching + "\n" +
+              "완료확인된일정 : " + bookedDate + "\n" +
+              "완료확인된부스 : " + product;
 
-            stipVALUES[0][2] = "확정메시지X/예약에러";
+            stipVALUES[0][2] = "마지막확인X/예약에러";
             googlesheetappend(stipVALUES);
 
             var sendemjson = {
@@ -775,5 +810,60 @@ async function bldMidPhNumb(phnumb) {
 
   return phnumb.replace(middleNumber, maskedMiddleNumber);
 }
+
+async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
+
+  // console.log("ipdt1:" + ipdt1);
+  // console.log("iptime1:" + iptime1);
+  // console.log("exttime:" + exttime);
+
+  const inputDate1 = ipdt1.split('.');
+  const inputTime1 = iptime1.split(' - ');
+  const inputDate2 = exttime.split('(');
+  const inputDate2cv = inputDate2[0].split('.');
+  const inputDate2cv2 = inputDate2[1].split(') ');
+  const inputDate2cv3 = inputDate2cv2[1].split('~');
+
+  // console.log("-inputDate1:"+inputDate1);
+  // console.log("-inputTime1:"+inputTime1);
+  // console.log("-inputDate2cv:"+inputDate2cv)
+  // console.log("-inputDate2_2:"+inputDate2[1])
+  // console.log("-inputDate2cv2:"+inputDate2cv2[1])
+  // console.log("-inputDate2cv3:"+inputDate2cv3)
+
+  const ipdate_year = parseInt(inputDate1[0]);
+  const ipdate_month = parseInt(inputDate1[1]);
+  const ipdate_date = parseInt(inputDate1[2]);
+  const ipdate_time1 = inputTime1[0];
+  const ipdate_time2 = inputTime1[1];
+
+  const exdate_year = parseInt(inputDate2cv[0]);
+  const exdate_month = parseInt(inputDate2cv[1]);
+  const exdate_date = parseInt(inputDate2cv[2]);
+  const exdate_time1 = inputDate2cv3[0];
+  const exdate_time2 = inputDate2cv3[1];
+
+  // console.log(ipdate_year);
+  // console.log(ipdate_month);
+  // console.log(ipdate_date);
+  // console.log(ipdate_time1);
+  // console.log(ipdate_time2);
+
+  // console.log(exdate_year);
+  // console.log(exdate_month);
+  // console.log(exdate_date);
+  // console.log(exdate_time1);
+  // console.log(exdate_time2);
+
+  // 추출된 정보를 예상되는 형식과 비교
+  if (ipdate_year === exdate_year && ipdate_month === exdate_month && ipdate_date === exdate_date && ipdate_time1 === exdate_time1 && ipdate_time2 === exdate_time2 && ipbk1 === exbk1) {
+    //console.log("맞습니다.");
+    return true;
+  } else {
+    //console.log("틀립니다.");
+    return false;
+  }
+}
+
 
 module.exports = { scrapeLogic, numpad, weekdaypr, sendemailPr, googlesheetappend };

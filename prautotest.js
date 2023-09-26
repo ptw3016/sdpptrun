@@ -295,7 +295,7 @@ async function startTimer() {
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
                             var ipmonthval = 9;
-                            var ipdayval = "17";
+                            var ipdayval = "30";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";
@@ -455,7 +455,7 @@ async function prautoProcess(prjsonArray) {  //연습실 방잡기
                 console.log("The value of the imported month is not a number.");
             }
         }
-        await scrapeLogicProcess(prscjson, resp);
+        await scrapeLogicProcess(prscjson);
 
     }
 

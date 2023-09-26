@@ -117,15 +117,14 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         if (elements.length > 0) {
             //신청일시 정렬 XP ------start
-            ////*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button
             const liXPath7 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
             const liElement7 = await sdipage.waitForXPath(liXPath7);
             await liElement7.click();
-            await sdipage.waitForTimeout(500);
+            await sdipage.waitForTimeout(1000);
             const liXPath8 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
             const liElement8 = await sdipage.waitForXPath(liXPath8);
             await liElement8.click();
-            await sdipage.waitForTimeout(100);
+            await sdipage.waitForTimeout(1000);
             //신청일시 정렬 XP ------ end
 
             const lastElement = elements[elements.length - 1]; //제일 최근 예약자 정보 가져오기
