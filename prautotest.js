@@ -3,6 +3,7 @@ const { OAuth2Client } = require('google-auth-library');
 const nodemailer = require("nodemailer");
 const scrapeLogic = require("./scrapeLogic");
 const infochkppt = require("./infochkppt");
+const fs = require('fs');
 
 require("dotenv").config();
 
@@ -125,9 +126,9 @@ async function startTimer() {
                             infochkerrt = "0000";
                         } else {
                             var infochkrt = await infochkppt.sdprgetinfo();
-                            
+
                             //mifcrtcode 결과로 오류이메일 전송 준비!,시트추가도 준비!
-                            
+
                             if (infochkrt.memberinfochk == true && infochkrt.mifcrtcode == "0000") {
                                 console.log("이용내역 일치정보 확인!");
                                 infochkname = infochkrt.minfochkname;
@@ -142,7 +143,7 @@ async function startTimer() {
                         }
 
                         var prjson = await googleemailmsgget(messages[i].id);  //실사용
-                        
+
                         if (prjson == "") {
                             continue;
                         }
@@ -150,8 +151,8 @@ async function startTimer() {
                         var prscdatejson = await prdtcovDate(prusedateext.ipdatedt);
 
                         var chknameprrt = await blindnamechkPr(infochkname, prjson.prscname);
-                        console.log("infochkname:"+infochkname);
-                        console.log("prjson.prscname:"+prjson.prscname);
+                        //console.log("infochkname:" + infochkname);
+                        //console.log("prjson.prscname:" + prjson.prscname);
 
                         var chknrst = chknameprrt.chknameresult;
 
@@ -206,7 +207,7 @@ async function startTimer() {
                                 emailcontent = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
-                                    "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
+                                    "/신청자phnum : " + infochkphnum + " (" + testchk + ")" + "\n" +
                                     "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
                                     "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
                                     "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
@@ -219,7 +220,7 @@ async function startTimer() {
                                 emailcontent = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 신규일 수 있으니 확인해보세요!\n" +
                                     "----reqbd----\n" +
                                     "/신청자명 : " + infochkname + "\n" +
-                                    "/신청자phnum : " + infochkphnum +" ("+testchk+")" +"\n" +
+                                    "/신청자phnum : " + infochkphnum + " (" + testchk + ")" + "\n" +
                                     "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
                                     "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
                                     "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
@@ -294,8 +295,8 @@ async function startTimer() {
                         }
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
-                            var ipmonthval = 9;
-                            var ipdayval = "30";
+                            var ipmonthval = 10;
+                            var ipdayval = "5";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";
@@ -311,7 +312,7 @@ async function startTimer() {
                             var iptimeedval2 = prusedateext.ipdateed2;
                         }
 
-                        
+
 
                         var prscjson = {  // 실사용
                             prrqsw: "prrqAutoswon",

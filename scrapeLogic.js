@@ -163,6 +163,7 @@ const scrapeLogic = async (reqbd, res) => {
 
     //console.log('입력후 로그인버튼 클릭!');
     await page.click('.btn_login');
+    await page.waitForTimeout(500);
     const liXPathsrch = '//*[@id="container"]/div/div/div[1]/div[2]/button';
     const liElementsrch = await page.waitForXPath(liXPathsrch);
     await liElementsrch.click();
@@ -456,9 +457,10 @@ const scrapeLogic = async (reqbd, res) => {
           await page.waitForXPath('//*[@id="root"]/div[3]/div[2]/div[2]/div[2]/div/strong');
           let extractedText = "";
           await page.waitForTimeout(500);
-          let extText = "";
-          let product = "";
+          let extText = "emt";
+          let product = "emt";
           let isScheduleMatching = false;
+          let bookedDate = "";
           try {
             extractedText = await page.$eval('.popup_tit', (el) => el.innerText);
 
@@ -480,13 +482,13 @@ const scrapeLogic = async (reqbd, res) => {
             });
             //console.log("확정상품:" + product);
 
-            const bookedDate = await page.$eval('.booked_date', (element) => element.textContent);
+            bookedDate = await page.$eval('.booked_date', (element) => element.textContent);
 
             // console.log("확정일정:"+bookedDate);
             // console.log("신청날짜:"+prdatecvwk);
             // console.log("신청시간:"+apprtime);
 
-            isScheduleMatching = await checkSchedule(prdatecvwk, apprtime, bookedDate);
+            isScheduleMatching = await checkSchedule(prdatecvwk, apprtime, bookedDate,bjroomchk,product);
 
           } catch (e) {
             emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 [완료페이지] 확인안됨!";
@@ -495,7 +497,11 @@ const scrapeLogic = async (reqbd, res) => {
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
-              "/예약시간 : " + apprtime + "\n";
+              "/예약시간 : " + apprtime + "\n"+
+              "-----error msg-----\n" +
+              e.message + "\n" +
+              "-----error stack-----\n" +
+              e.stack;
 
             stipVALUES[0][2] = "확정메시지X/예약에러";
             googlesheetappend(stipVALUES);

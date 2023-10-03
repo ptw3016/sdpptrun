@@ -78,12 +78,16 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         await sdipage.waitForTimeout(1000);
 
         var elements = await sdipage.$$('.BookingListView__contents-user__1BF15');
+        var elements2 = await sdipage.$$('.BookingListView__contents-booking__aYBFL');
+        //
+
         var prscinfoname = "";
         var prscinfophnum = "";
         var memberinfochk = false;
         var elementsct = elements.length;
         //elementsct = 0;
         var runct = 0;
+
         if (elementsct == 0) {
             for (var i = 0; i < 3; i++) {
                 runct += 1;
@@ -116,18 +120,23 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
 
         if (elements.length > 0) {
-            //신청일시 정렬 XP ------start
-            const liXPath7 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
-            const liElement7 = await sdipage.waitForXPath(liXPath7);
-            await liElement7.click();
-            await sdipage.waitForTimeout(1000);
-            const liXPath8 = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]/div[8]/button';
-            const liElement8 = await sdipage.waitForXPath(liXPath8);
-            await liElement8.click();
-            await sdipage.waitForTimeout(1000);
-            //신청일시 정렬 XP ------ end
+            var latestdateArray = [];
+            for (var i = 0; i < elements.length; i++) {
+                var lastElement2 = elements[i]; //제일 최근 예약자 정보 가져오기
+                var lastElement3 = elements2[i];
+                var nameElement2 = await lastElement2.$('.BookingListView__name__16_zV');
+                var sclatestElement = await lastElement3.$('.BookingListView__order-date__2ARr_');
+                var nyname2 = await sdipage.evaluate((el) => el.textContent, nameElement2);
+                var sclatestDate = await sdipage.evaluate((el) => el.textContent, sclatestElement);
+                //console.log("elements[" + i + "]:" + nyname2 + "/latestDate:" + sclatestDate);
+                latestdateArray.push(sclatestDate);
+            }
 
-            const lastElement = elements[elements.length - 1]; //제일 최근 예약자 정보 가져오기
+            //console.log(latestdateArray);
+            const ltid = await findLatestDate(latestdateArray);
+            //console.log("ltid:"+ltid);
+
+            const lastElement = elements[ltid]; //제일 최근 예약자 정보 가져오기
             const nameElement = await lastElement.$('.BookingListView__name__16_zV');
             var nyname = await sdipage.evaluate((el) => el.textContent, nameElement);
             const phElement = await lastElement.$('.BookingListView__phone__2IoIp');
@@ -135,11 +144,11 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             prscinfoname = nyname;
             prscinfophnum = phNumber;
             await sdipage.waitForTimeout(500);
-            // console.log("수정중nm:" + prscinfoname);
+            //console.log("infochknm:" + prscinfoname);
             // console.log("수정중ph:" + prscinfophnum);
-            // const screenshot = await sdipage.screenshot({ fullPage: true });
+            //const screenshot = await sdipage.screenshot({ fullPage: true });
             //스크린샷 저장
-            // fs.writeFileSync('screenshot.png', screenshot);
+            //fs.writeFileSync('screenshot.png', screenshot);
 
         } else {
             console.log("이용내역중 리스트가 없습니다! 종료합니다!");
@@ -283,5 +292,53 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
 }
 
+
+// dateArray는 날짜들을 문자열로 담은 배열입니다.
+// async/await를 사용하여 동기식으로 함수를 구현합니다.
+async function findLatestDate(dateArray) {
+    // Date 객체로 변환하기 위해 날짜 형식을 바꿉니다.
+    // 예: "23. 10. 2.(월) 오후 12:58" -> "2023-10-02T12:58:00"
+    //console.log(dateArray)
+    let formattedArray = dateArray.map(date => {
+      let year = "20" + date.slice(0, 2); // 연도
+      let month = date.slice(4, 6); // 월
+      let day = date.slice(7, 9); // 일
+      day = day.trim();
+      let timegb = date.slice(14,16);
+      let timestring = date.slice(17, 24); // 시간
+      let timearray = timestring.split(":");
+      let hour = timearray[0];
+      let minute = timearray[1];
+      if (timegb === "오후") { // 오후인 경우 시간에 12를 더합니다.
+        if (hour !== "12") { // 오후 12시는 그대로 두고, 오후 1시부터 12를 더합니다.
+          hour = String(Number(hour) + 12);
+        }
+      }
+      //console.log(timegb);
+      return `${year}-${numpad(month)}-${numpad(day)}T${numpad(hour)}:${numpad(minute)}:00`;
+    });
+
+    //console.log(formattedArray);
+    
+    // Date 객체로 변환합니다.
+    let dateObjects = formattedArray.map(date => new Date(date));
+    
+    // Date 객체들을 밀리초로 변환합니다.
+    let dateMilliseconds = dateObjects.map(date => date.getTime());
+    
+    // 가장 최근 날짜를 찾습니다.
+    let latestDate = Math.max(...dateMilliseconds);
+    
+    // 최근 날짜의 인덱스를 찾습니다.
+    let index = dateMilliseconds.indexOf(latestDate);
+    
+    // 결과를 출력합니다.
+    //console.log(`제일 최근 날짜는 ${dateArray[index]}이고, 배열의 인덱스는 ${index}입니다.`);
+    return index;
+  }
+
+  function numpad(number) {
+    return number.toString().padStart(2, "0");
+  }
 
 module.exports = { sdprgetinfo };
