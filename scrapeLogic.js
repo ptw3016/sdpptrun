@@ -12,6 +12,7 @@ const REDIRECT_URI = process.env.REDIRECT_URI;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REFRESH_TOKEN2 = process.env.REFRESH_TOKEN2;
 const SHEET_NAME = process.env.SHEET_NAME;
+const SHEET_NAME2 = process.env.SHEET_NAME2;
 const SHEET_ID = process.env.SHEET_ID;
 
 const scrapeLogic = async (reqbd, res) => {
@@ -301,7 +302,6 @@ const scrapeLogic = async (reqbd, res) => {
           await liElementsrfnl.click();
           await page.waitForTimeout(1000);
 
-          //var liElements = await page.$$('ul.lst_item_box > li.item');
           const liElements = await page.$$('ul.lst_item_box > li.item');
           var prroomchkArray = [
             process.env.SdBtName1,
@@ -450,10 +450,6 @@ const scrapeLogic = async (reqbd, res) => {
           const liElementsrfngo = await page.waitForXPath(liXPathsrfngo);
           await liElementsrfngo.click();
 
-          //await page.waitForTimeout(1000);
-          // const screenshot = await page.screenshot({ fullPage: true });
-          // fs.writeFileSync('screenshot.png', screenshot);
-          //console.log("예약완료화면 기다리기");
           await page.waitForXPath('//*[@id="root"]/div[3]/div[2]/div[2]/div[2]/div/strong');
           let extractedText = "";
           await page.waitForTimeout(500);
@@ -467,9 +463,8 @@ const scrapeLogic = async (reqbd, res) => {
             const xclosepath = '//*[@id="root"]/div[3]/div[2]/div[2]/div[1]/a/i';
             const xclosepathgo = await page.waitForXPath(xclosepath);
             await xclosepathgo.click();
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(1000);
 
-            // Puppeteer를 사용하여 <h3> 요소 내의 텍스트를 추출합니다.
             extText = await page.evaluate(() => {
               const element = document.querySelector('h3.confirm_title span.title_text');
               return element.textContent;
@@ -488,7 +483,7 @@ const scrapeLogic = async (reqbd, res) => {
             // console.log("신청날짜:"+prdatecvwk);
             // console.log("신청시간:"+apprtime);
 
-            isScheduleMatching = await checkSchedule(prdatecvwk, apprtime, bookedDate,bjroomchk,product);
+            isScheduleMatching = await checkSchedule(prdatecvwk, apprtime, bookedDate, bjroomchk, product);
 
           } catch (e) {
             emailsubject = "(Lab연습실)예약과정은 완료되었으나 마지막 [완료페이지] 확인안됨!";
@@ -497,7 +492,7 @@ const scrapeLogic = async (reqbd, res) => {
               "----reqbd----\n" +
               "/예약자명 : " + reqbd.ipname + "\n" +  //name
               "/예약일자 : " + prdatecvwk + "\n" +
-              "/예약시간 : " + apprtime + "\n"+
+              "/예약시간 : " + apprtime + "\n" +
               "-----error msg-----\n" +
               e.message + "\n" +
               "-----error stack-----\n" +
@@ -573,7 +568,7 @@ const scrapeLogic = async (reqbd, res) => {
               "/예약완료부스 : " + bjroomchk + "\n" +
               "/메시지 전송결과 : " + msgrqval + "( " + sdnumbchk + " ) / admin : " + admsgrqval + "\n" +
               "/isScheduleMatching : " + isScheduleMatching;
-              
+
             stipVALUES[0][2] = bjroomchk;
             googlesheetappend(stipVALUES);
 
@@ -623,7 +618,6 @@ const scrapeLogic = async (reqbd, res) => {
 
   } catch (e) {
 
-    await browser.close();
     console.error(e);
     var emailsubject = "(Lab연습실)예약 중 에러가 떳습니다.!";
     var emailcontent = "(Lab연습실)예약 중 에러가 떳습니다.!\n" +
@@ -635,11 +629,16 @@ const scrapeLogic = async (reqbd, res) => {
     stipVALUES[0][2] = "예약에러";
     googlesheetappend(stipVALUES);
 
+    const sshotattach = await page.screenshot({ fullPage: true });
+    // 스크린샷 저장
+    //fs.writeFileSync('screenshot.png', screenshot);
     var sendemjson = {
       to: process.env.sdadminnvml,
       subject: emailsubject,
       message: emailcontent,
-      attachmsg: "ok"
+      attachmsg: "ok",
+      screenshotfn: sshotattach
+
     }
 
     //메일 전송
@@ -770,7 +769,51 @@ async function googlesheetappend(VALUES) {
       valueInputOption: 'USER_ENTERED',
       resource: { values: VALUES },
     });
-    console.log(`시트에 행이 추가되었습니다.`);
+    //console.log(`시트에 행이 추가되었습니다.`);
+
+    // const response = await sheets.spreadsheets.values.get({  //sheet get!
+    //   spreadsheetId,
+    //   range: `${sheetName}!${range}`,
+    // });
+
+  } catch (e) {
+
+    console.error(e);
+    var emailsubject = "시트에 추가중 에러발생!!";
+    var emailcontent = "시트에 추가중 에러발생!!\n" +
+
+      "-----error msg-----\n" +
+      e.message + "\n" +
+      "-----error stack-----\n" +
+      e.stack;
+
+    var sendemjson = {
+      to: process.env.sdadminnvml,
+      subject: emailsubject,
+      message: emailcontent
+    }
+    //메일 전송
+    sendemailPr(sendemjson); // 이메일 전송
+  }
+
+}
+
+async function ggstprUserApd(prUeserVal) {
+
+  const RANGE = `${SHEET_NAME2}!A:B`; // 
+  const authClient = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+  authClient.setCredentials({ refresh_token: REFRESH_TOKEN2 });
+  const sheets = google.sheets({ version: 'v4', auth: authClient });
+  try {
+
+    const response = await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      //spreadsheetName: SHEET_NAME,
+      range: RANGE,
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: prUeserVal },
+    });
+    //console.log(`시트에 행이 추가되었습니다.`);
 
     // const response = await sheets.spreadsheets.values.get({  //sheet get!
     //   spreadsheetId,
@@ -872,4 +915,4 @@ async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
 }
 
 
-module.exports = { scrapeLogic, numpad, weekdaypr, sendemailPr, googlesheetappend };
+module.exports = { scrapeLogic, numpad, weekdaypr, sendemailPr, googlesheetappend, ggstprUserApd };

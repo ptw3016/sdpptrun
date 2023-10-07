@@ -11,6 +11,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const REFRESH_TOKEN2 = process.env.REFRESH_TOKEN2;
 const SHEET_ID = process.env.SHEET_ID;
+const SdTitle = process.env.SdTitle;
 
 const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
     const sdprchkbrs = await puppeteer.launch({
@@ -79,7 +80,6 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         var elements = await sdipage.$$('.BookingListView__contents-inner__18GR3');
         var elements2 = await sdipage.$$('.BookingListView__content__1_hnb');
-        //
 
         var prscinfoname = "";
         var prscinfophnum = "";
@@ -213,9 +213,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             var emailsubject = "infochkppt에서 회원확인안됨!!";
             var emailcontent = "infochkppt에서 회원확인안됨!!\n" +
                 "----확인내용----\n" +
-                "*예약내역nm : " + prscinfoname + "\n" +
-                "*이용회원nm : " + chkname + "\n" +
-                "*예약내역cp : " + prscinfophnum + "\n" +
+                "*조회된nm : " + prscinfoname + "\n" +
+                "*조회된cp : " + prscinfophnum + "\n" +
                 "---------------\n" +
                 "신규가 맞는지도 확인해보기!";
 
@@ -224,8 +223,11 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 subject: emailsubject,
                 message: emailcontent
             }
+
+            //var pruserValues = [["예약",SdTitle, ]];
             //메일 전송
             scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
+            //scrapeLogic.ggstprUserApd(pruserValues);
             return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode: "0002" }
         }
 
@@ -233,6 +235,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
     } catch (e) {
 
         console.error(e);
+        const sshotattach = await sdipage.screenshot({ fullPage: true });
+        
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
 
@@ -247,7 +251,10 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         var sendemjson = {
             to: process.env.sdadminnvml,
             subject: emailsubject,
-            message: emailcontent
+            message: emailcontent,
+            attachmsg: "ok",
+            screenshotfn: sshotattach
+
         }
         //메일 전송
         scrapeLogic.sendemailPr(sendemjson); // 이메일 전송

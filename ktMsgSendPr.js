@@ -95,7 +95,7 @@ const ktsendPr = async (sjs) => {
         const sendresult = await getKakaoATResult(accessKey, serviceId, messageId);
         const msgrstcode = sendresult.ktmsgresultcode;
         const msgcontent = params.messages[0].content;
-        console.log("메시지 요청결과 : " + msgrstcode);
+        //console.log("메시지 요청결과 : " + msgrstcode);
         const currentDate = new Date();
         const rqinputdtcv = await formDateToStr(currentDate);
         
@@ -364,7 +364,7 @@ async function ktnystappend(sdipjson) {
             valueInputOption: 'USER_ENTERED',
             resource: { values: ktnyArray },
         });
-        console.log(`ktny 시트에 행이 추가되었습니다.`);
+        //console.log(`ktny 시트에 행이 추가되었습니다.`);
 
         // const response = await sheets.spreadsheets.values.get({  //sheet get!
         //   spreadsheetId,
