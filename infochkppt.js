@@ -77,55 +77,21 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         const liElementsrch = await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
-        var elements = await sdipage.$$('.BookingListView__contents-user__1BF15');
-        var elements2 = await sdipage.$$('.BookingListView__contents-booking__aYBFL');
+        var elements = await sdipage.$$('.BookingListView__contents-inner__18GR3');
+        var elements2 = await sdipage.$$('.BookingListView__content__1_hnb');
         //
 
         var prscinfoname = "";
         var prscinfophnum = "";
         var memberinfochk = false;
-        var elementsct = elements.length;
-        //elementsct = 0;
-        var runct = 0;
-
-        if (elementsct == 0) {
-            for (var i = 0; i < 3; i++) {
-                runct += 1;
-                console.log("조회된 이용내역 0이므로 " + runct + "번째 다시실행!");
-                elements = await sdipage.$$('.BookingListView__contents-user__1BF15');
-                elementsct = elements.length;
-                if (elementsct > 0) {
-                    console.log("다시 조회된 이용내역 갯수 " + elementsct + "이므로 다음단계!");
-                    break;
-                }
-                await sdipage.waitForTimeout(1000);
-            }
-        }
-        if (runct == 3 && elementsct == 0) {
-            console.log("이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!");
-            emailsubject = "이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!";
-            emailcontent = "이용내역이 0이어서 3번까지 재실행 후에도 0이어서 종료!\n" +
-                "----reqbd----\n" +
-                "/이용내역 조회갯수 : " + elementsct;
-
-            var sendemjson = {
-                to: process.env.sdadminnvml,
-                subject: emailsubject,
-                message: emailcontent
-            }
-            //메일 전송
-            await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
-        }
-
 
         if (elements.length > 0) {
             var latestdateArray = [];
             for (var i = 0; i < elements.length; i++) {
                 var lastElement2 = elements[i]; //제일 최근 예약자 정보 가져오기
                 var lastElement3 = elements2[i];
-                var nameElement2 = await lastElement2.$('.BookingListView__name__16_zV');
-                var sclatestElement = await lastElement3.$('.BookingListView__order-date__2ARr_');
+                var nameElement2 = await lastElement2.$('.BookingListView__name__1eZig');
+                var sclatestElement = await lastElement3.$('.BookingListView__order-date__27tia');
                 var nyname2 = await sdipage.evaluate((el) => el.textContent, nameElement2);
                 var sclatestDate = await sdipage.evaluate((el) => el.textContent, sclatestElement);
                 //console.log("elements[" + i + "]:" + nyname2 + "/latestDate:" + sclatestDate);
@@ -137,9 +103,9 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             //console.log("ltid:"+ltid);
 
             const lastElement = elements[ltid]; //제일 최근 예약자 정보 가져오기
-            const nameElement = await lastElement.$('.BookingListView__name__16_zV');
+            const nameElement = await lastElement.$('.BookingListView__name__1eZig');
             var nyname = await sdipage.evaluate((el) => el.textContent, nameElement);
-            const phElement = await lastElement.$('.BookingListView__phone__2IoIp');
+            const phElement = await lastElement.$('.BookingListView__phone__1H696');
             var phNumber = await sdipage.evaluate((el) => el.textContent, phElement);
             prscinfoname = nyname;
             prscinfophnum = phNumber;
@@ -158,7 +124,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
             emailsubject = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!";
             emailcontent = "(Lab연습실)이용내역중 조회된 리스트가 없습니다! 종료합니다!\n" +
-
+                "클래스 변경 가능성있음 확인!\n"+
                 "----reqbd----\n" +
                 "/이용내역 조회갯수 : " + elements.length;
 

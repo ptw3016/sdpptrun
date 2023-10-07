@@ -163,7 +163,7 @@ const scrapeLogic = async (reqbd, res) => {
 
     //console.log('입력후 로그인버튼 클릭!');
     await page.click('.btn_login');
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
     const liXPathsrch = '//*[@id="container"]/div/div/div[1]/div[2]/button';
     const liElementsrch = await page.waitForXPath(liXPathsrch);
     await liElementsrch.click();
