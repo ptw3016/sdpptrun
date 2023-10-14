@@ -78,16 +78,18 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         const liElementsrch = await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
-        var elements = await sdipage.$$('[class^="BookingListView__contents-inner__"]');
+        var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
 
-        var elements2 = await sdipage.$$('[class^="BookingListView__content__"]');
+        var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
 
         var prscinfoname = "";
         var prscinfophnum = "";
         var memberinfochk = false;
         //console.log("이용내역갯수:"+elements.length);
-   
-        if (elements.length > 0) {
+        let elementslth = elements.length;
+        //elementslth = 0;
+
+        if (elementslth > 0) {
             var latestdateArray = [];
             for (var i = 0; i < elements.length; i++) {
                 var lastElement2 = elements[i]; //제일 최근 예약자 정보 가져오기
@@ -119,6 +121,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             //fs.writeFileSync('screenshot.png', screenshot);
 
         } else {
+            const sshotattach = await sdipage.screenshot({ fullPage: true });
+            
             console.log("이용내역중 리스트가 없습니다! 종료합니다!");
             //console.log("chkboolean: " + memberinfochk);
             // console.log(minfochkname);
@@ -130,11 +134,15 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 "----reqbd----\n" +
                 "/이용내역 조회갯수 : " + elements.length;
 
+            // 스크린샷 저장
             var sendemjson = {
                 to: process.env.sdadminnvml,
                 subject: emailsubject,
-                message: emailcontent
-            }
+                message: emailcontent,
+                attachmsg: "ok",
+                screenshotfn: sshotattach
+          
+              }
             //메일 전송
             await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
             return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
