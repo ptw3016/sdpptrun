@@ -79,8 +79,9 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         await sdipage.waitForTimeout(1000);
 
         var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
-
         var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
+
+        await sdipage.waitForTimeout(1500);
 
         var prscinfoname = "";
         var prscinfophnum = "";
