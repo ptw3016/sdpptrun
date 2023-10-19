@@ -75,11 +75,17 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         //console.log('입력후 로그인버튼 클릭!');
         await sdipage.click('.btn_login');
         const liXPathsrch = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[2]';
-        const liElementsrch = await sdipage.waitForXPath(liXPathsrch);
+        await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
         var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
         var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
+        
+        const liXPathsrch3 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[1]/div/div/div[3]/div/div/div/div[1]/a';
+        await sdipage.waitForXPath(liXPathsrch3);
+
+        const liXPathsrch2 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[4]/div[2]';
+        await sdipage.waitForXPath(liXPathsrch2);
 
         await sdipage.waitForTimeout(1500);
 
