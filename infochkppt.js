@@ -78,8 +78,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
-        var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
-        var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
+      
         
         const liXPathsrch3 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[1]/div/div/div[3]/div/div/div/div[1]/a';
         await sdipage.waitForXPath(liXPathsrch3);
@@ -87,8 +86,15 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         const liXPathsrch2 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[4]/div[2]';
         await sdipage.waitForXPath(liXPathsrch2);
 
-        await sdipage.waitForTimeout(1500);
+        await sdipage.waitForTimeout(1000);
 
+        await sdipage.waitForXPath('//*[contains(@class, "BookingListView__contents-inner__")]');
+        await sdipage.waitForXPath('//*[contains(@class, "BookingListView__content__")]');
+        await sdipage.waitForXPath('//*[contains(@class, "BookingListView__name__")]');
+
+        var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
+        var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
+       
         var prscinfoname = "";
         var prscinfophnum = "";
         var memberinfochk = false;
@@ -241,7 +247,6 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 message: emailcontent
             }
 
-            //var pruserValues = [["예약",SdTitle, ]];
             //메일 전송
             scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
             //scrapeLogic.ggstprUserApd(pruserValues);
