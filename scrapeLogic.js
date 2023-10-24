@@ -160,11 +160,11 @@ const scrapeLogic = async (reqbd, res) => {
     await page.keyboard.down('ControlLeft');
     await page.keyboard.press('KeyV');
     await page.keyboard.up('ControlLeft');
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
 
     //console.log('입력후 로그인버튼 클릭!');
     await page.click('.btn_login');
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     const liXPathsrch = '//*[@id="container"]/div/div/div[1]/div[2]/button';
     const liElementsrch = await page.waitForXPath(liXPathsrch);
     await liElementsrch.click();
@@ -511,7 +511,6 @@ const scrapeLogic = async (reqbd, res) => {
             return { rqcode: "0000", prresultcode: "0006", prsultreson: "Booking confirmation message error1" };
           }
 
-          await browser.close();
 
           if (extText.indexOf("예약 확정") != -1 && isScheduleMatching == true) {
             //console.log("예약확정 메시지 확인!.");
@@ -612,8 +611,6 @@ const scrapeLogic = async (reqbd, res) => {
 
         }
       }
-
-
     }
 
   } catch (e) {
@@ -861,56 +858,83 @@ async function bldMidPhNumb(phnumb) {
 }
 
 async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
+  try {
+    // console.log("ipdt1:" + ipdt1);
+    // console.log("iptime1:" + iptime1);
+    // console.log("exttime:" + exttime);
 
-  // console.log("ipdt1:" + ipdt1);
-  // console.log("iptime1:" + iptime1);
-  // console.log("exttime:" + exttime);
+    const inputDate1 = await ipdt1.split('.');
+    const inputTime1 = await iptime1.split(' - ');
+    const inputDate2 = await exttime.split('(');
+    const inputDate2cv = await inputDate2[0].split('.');
+    const inputDate2cv2 = await inputDate2[1].split(') ');
+    //console.log("inputDate2" + inputDate2); //2023. 10. 26,목) 오전 9:00~오전 10:00,1시간)
+    const inputDate2cv3 = await inputDate2cv2[1].split('~');
 
-  const inputDate1 = ipdt1.split('.');
-  const inputTime1 = iptime1.split(' - ');
-  const inputDate2 = exttime.split('(');
-  const inputDate2cv = inputDate2[0].split('.');
-  const inputDate2cv2 = inputDate2[1].split(') ');
-  const inputDate2cv3 = inputDate2cv2[1].split('~');
+    // console.log("-inputDate1:"+inputDate1);
+    // console.log("-inputTime1:"+inputTime1);
+    // console.log("-inputDate2cv:"+inputDate2cv)
+    // console.log("-inputDate2_2:"+inputDate2[1])
+    // console.log("-inputDate2cv2:"+inputDate2cv2[1])
+    // console.log("-inputDate2cv3:"+inputDate2cv3)
 
-  // console.log("-inputDate1:"+inputDate1);
-  // console.log("-inputTime1:"+inputTime1);
-  // console.log("-inputDate2cv:"+inputDate2cv)
-  // console.log("-inputDate2_2:"+inputDate2[1])
-  // console.log("-inputDate2cv2:"+inputDate2cv2[1])
-  // console.log("-inputDate2cv3:"+inputDate2cv3)
+    const ipdate_year = parseInt(inputDate1[0]);
+    const ipdate_month = parseInt(inputDate1[1]);
+    const ipdate_date = parseInt(inputDate1[2]);
+    const ipdate_time1 = inputTime1[0];
+    const ipdate_time2 = inputTime1[1];
 
-  const ipdate_year = parseInt(inputDate1[0]);
-  const ipdate_month = parseInt(inputDate1[1]);
-  const ipdate_date = parseInt(inputDate1[2]);
-  const ipdate_time1 = inputTime1[0];
-  const ipdate_time2 = inputTime1[1];
+    const exdate_year = parseInt(inputDate2cv[0]);
+    const exdate_month = parseInt(inputDate2cv[1]);
+    const exdate_date = parseInt(inputDate2cv[2]);
+    const exdate_time1 = inputDate2cv3[0];
+    const exdate_time2 = inputDate2cv3[1];
 
-  const exdate_year = parseInt(inputDate2cv[0]);
-  const exdate_month = parseInt(inputDate2cv[1]);
-  const exdate_date = parseInt(inputDate2cv[2]);
-  const exdate_time1 = inputDate2cv3[0];
-  const exdate_time2 = inputDate2cv3[1];
+    // console.log(ipdate_year);
+    // console.log(ipdate_month);
+    // console.log(ipdate_date);
+    // console.log(ipdate_time1);
+    // console.log(ipdate_time2);
 
-  // console.log(ipdate_year);
-  // console.log(ipdate_month);
-  // console.log(ipdate_date);
-  // console.log(ipdate_time1);
-  // console.log(ipdate_time2);
+    // console.log(exdate_year);
+    // console.log(exdate_month);
+    // console.log(exdate_date);
+    // console.log(exdate_time1);
+    // console.log(exdate_time2);
 
-  // console.log(exdate_year);
-  // console.log(exdate_month);
-  // console.log(exdate_date);
-  // console.log(exdate_time1);
-  // console.log(exdate_time2);
+    // 추출된 정보를 예상되는 형식과 비교
+    if (ipdate_year === exdate_year && ipdate_month === exdate_month && ipdate_date === exdate_date && ipdate_time1 === exdate_time1 && ipdate_time2 === exdate_time2 && ipbk1 === exbk1) {
+      //console.log("맞습니다.");
+      return true;
+    } else {
+      //console.log("틀립니다.");
+      return false;
+    }
 
-  // 추출된 정보를 예상되는 형식과 비교
-  if (ipdate_year === exdate_year && ipdate_month === exdate_month && ipdate_date === exdate_date && ipdate_time1 === exdate_time1 && ipdate_time2 === exdate_time2 && ipbk1 === exbk1) {
-    //console.log("맞습니다.");
-    return true;
-  } else {
-    //console.log("틀립니다.");
-    return false;
+  } catch (e) {
+
+    console.error(e);
+    var emailsubject = "(Lab연습실)예약 중 checkSchedule에서 에러가 떳습니다.!";
+    var emailcontent = "(Lab연습실)예약 중 checkSchedule에서 에러가 떳습니다.!\n" +
+      "/ipdt1:" + ipdt1 + "\n" +
+      "/iptime1:" + iptime1 + "\n" +
+      "/exttime:" + exttime + "\n" +
+      "/ipbk1:" + ipbk1 + "\n" +
+      "/exbk1:" + exbk1 + "\n" +
+      "-----error msg-----\n" +
+      e.message + "\n" +
+      "-----error stack-----\n" +
+      e.stack;
+
+    var sendemjson = {
+      to: process.env.sdadminnvml,
+      subject: emailsubject,
+      message: emailcontent,
+    }
+
+    //메일 전송
+    sendemailPr(sendemjson); // 이메일 전송
+
   }
 }
 
