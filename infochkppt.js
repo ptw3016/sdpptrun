@@ -257,7 +257,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
     } catch (e) {
 
         console.error(e);
-        const sshotattach = await sdipage.screenshot({ fullPage: true });
+        const sshotattach2 = await sdipage.screenshot({ fullPage: true });
 
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
@@ -275,7 +275,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             subject: emailsubject,
             message: emailcontent,
             attachmsg: "ok",
-            screenshotfn: sshotattach
+            screenshotfn: sshotattach2
 
         }
         //메일 전송
