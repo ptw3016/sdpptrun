@@ -866,9 +866,12 @@ async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
     const inputDate1 = await ipdt1.split('.');
     const inputTime1 = await iptime1.split(' - ');
     const inputDate2 = await exttime.split('(');
-    const inputDate2cv = await inputDate2[0].split('.');
+    const inputDate2cv = await inputDate2[0].split('.');  
     const inputDate2cv2 = await inputDate2[1].split(') ');
-    //console.log("inputDate2" + inputDate2); //2023. 10. 26,목) 오전 9:00~오전 10:00,1시간)
+    //console.log("inputDate2" + inputDate2); 
+    //2023. 10. 26,목) 오전 9:00~오전 10:00,1시간)
+    //Sat, 28 Oct 2023, 5:30 PM~6:30 PM(1hour)
+
     const inputDate2cv3 = await inputDate2cv2[1].split('~');
 
     // console.log("-inputDate1:"+inputDate1);

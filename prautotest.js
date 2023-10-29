@@ -246,8 +246,14 @@ async function startTimer() {
                                     "/예약갯수 : " + scgstextnum + "개";
 
                                 //메일 전송
+
+                                var sendemjson = {
+                                    to: process.env.sdadminnvml,
+                                    subject: emailsubject,
+                                    message: emailcontent
+                                }
                                 scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-                                prdatecv3
+                              
                                 prUserVal[0][3] = prdatecv3;
                                 prUserVal[0][5] = infochkname;
                                 prUserVal[0][6] = infochkphnum;

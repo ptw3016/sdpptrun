@@ -1,18 +1,10 @@
 const schedule = require('node-schedule');
-const { OAuth2Client } = require('google-auth-library');
-var nodemailer = require('nodemailer');
 const axios = require('axios');
 const crypto = require('crypto');
 const qs = require('qs');
 require("dotenv").config();
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
-
-// 튜야 API 기본 정보 설정
 const baseUrl = process.env.tyacurl; // 
 const accessKey = process.env.tyackey; // 
 const secretKey = process.env.tysckey; 
@@ -33,16 +25,6 @@ async function sdbgdlchkPr() {
         rststring = "*별관도어락 상태확인 : 별관 문이 닫혀있습니다.";
     }
 
-    var emailsubject = rststring;
-    var emailcontent = rststring + "\n";
-
-    //googlesheetappend(stipVALUES);
-    var sendemjson = {
-        to: process.env.sdadminnvml,
-        subject: emailsubject,
-        message: emailcontent
-    }
-    sendemailPr(sendemjson); //
 }
 
 async function dolcstatechk(device_id) { //dlcs control - chk
@@ -83,59 +65,6 @@ async function sctytimebkPr() {
     }
 }
 
-
-
-async function sendemailPr(sendemjson) {
-    const authClient = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    authClient.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-    var to = sendemjson.to;
-    var subject = sendemjson.subject;
-    var message = sendemjson.message;
-    var attachmsg = sendemjson.attachmsg;
-
-    const accessToken = await authClient.getAccessToken();
-    const transport = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            type: 'OAuth2',
-            user: process.env.sdadmingmml,
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-            accessToken: accessToken,
-        },
-    });
-
-    if (attachmsg == "ok") {
-        var screenshotfn = sendemjson.screenshotfn;
-        var mailOptions = {
-            from: '"' + process.env.SdTitle + ' ' + process.env.sdadmingmml, // 발신자 정보
-            to: to, // 수신자 정보
-            subject: subject, // 제목
-            text: message, // 내용 (텍스트)
-            attachments: [
-                {
-                    filename: 'screenshot.png',
-                    content: screenshotfn
-                }
-            ]
-            //html: "<b>html-이메일 테스트중</b>", // 내용 (HTML)
-        };
-    } else {
-        var mailOptions = {
-            from: '"' + process.env.SdTitle + ' ' + process.env.sdadmingmml, // 발신자 정보
-            to: to, // 수신자 정보
-            subject: subject, // 제목
-            text: message, // 내용 (텍스트)
-            //html: "<b>html-이메일 테스트중</b>", // 내용 (HTML)
-        };
-    }
-
-    const result = await transport.sendMail(mailOptions);
-    //console.log(result);
-}
-
 async function rltimestr() {
     const currentDate = new Date();
 
@@ -166,7 +95,7 @@ function encryptStr(str, secret) {
 
 async function tygetToken() {
   const timestamp = Date.now().toString();
-  console.log("tokentimestamp:"+timestamp);
+ 
   const signUrl = '/v1.0/token?grant_type=1';
   const contentHash = crypto.createHash('sha256').update('').digest('hex');
   const stringToSign = ['GET', contentHash, '', signUrl].join('\n');
@@ -188,7 +117,7 @@ async function tygetToken() {
     if (response.data.success) {
       tokenty = response.data.result.access_token;
       tokenExpireTime = response.data.result.expire_time;
-      console.log('Token obtained successfully:', tokenty);
+      //console.log('Token obtained successfully:', tokenty);
     } else {
       console.error('Token request failed:', response.data.msg);
     }
@@ -199,7 +128,7 @@ async function tygetToken() {
 
 async function callTyApi(method, path, params, data) {
     const timestamp = Date.now().toString();
-    console.log("calltyapitimestamp:"+timestamp);
+    
     const sortedParams = {};
     Object.keys(params)
       .sort()
@@ -248,7 +177,8 @@ async function callTyApi(method, path, params, data) {
 }
 
 
-module.exports = { sctytimebkPr };
+
+//module.exports = { sctytimebkPr };
 
 
 

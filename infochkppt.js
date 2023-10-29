@@ -78,8 +78,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
-      
-        
+
+
         const liXPathsrch3 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[1]/div/div/div[3]/div/div/div/div[1]/a';
         await sdipage.waitForXPath(liXPathsrch3);
 
@@ -94,7 +94,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         var elements = await sdipage.$$('[class*="BookingListView__contents-inner__"]');
         var elements2 = await sdipage.$$('[class*="BookingListView__content__"]');
-       
+
         var prscinfoname = "";
         var prscinfophnum = "";
         var memberinfochk = false;
@@ -135,7 +135,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         } else {
             const sshotattach = await sdipage.screenshot({ fullPage: true });
-            
+
             console.log("이용내역중 리스트가 없습니다! 종료합니다!");
             //console.log("chkboolean: " + memberinfochk);
             // console.log(minfochkname);
@@ -154,8 +154,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 message: emailcontent,
                 attachmsg: "ok",
                 screenshotfn: sshotattach
-          
-              }
+
+            }
             //메일 전송
             await scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
             return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "" }
@@ -257,18 +257,18 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
     } catch (e) {
 
         console.error(e);
-        const sshotattach2 = await sdipage.screenshot({ fullPage: true });
-
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
-
             "----reqbd----\n" +
             "/\n" +
             "-----error msg-----\n" +
             e.message + "\n" +
             "-----error stack-----\n" +
-            e.stack;
-
+            e.stack +
+            "-----chk info--------\n" +
+            "/prscinfoname:"+prscinfoname+"\n"+
+            "";
+        const sshotattach2 = await sdipage.screenshot({ fullPage: true });
 
         var sendemjson = {
             to: process.env.sdadminnvml,
@@ -276,7 +276,6 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             message: emailcontent,
             attachmsg: "ok",
             screenshotfn: sshotattach2
-
         }
         //메일 전송
         scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
@@ -284,10 +283,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         console.log("이용내역 검증 브라우저 종료");
         await sdprchkbrs.close();
     }
-
 }
-
-
 // dateArray는 날짜들을 문자열로 담은 배열입니다.
 // async/await를 사용하여 동기식으로 함수를 구현합니다.
 async function findLatestDate(dateArray) {
@@ -315,16 +311,16 @@ async function findLatestDate(dateArray) {
     });
 
     //console.log("formattedArray:"+formattedArray);
-    
+
     // Date 객체로 변환합니다.6
     let dateObjects = formattedArray.map(date => new Date(date));
-    
+
     // Date 객체들을 밀리초로 변환합니다.
     let dateMilliseconds = dateObjects.map(date => date.getTime());
-    
+
     // 가장 최근 날짜를 찾습니다.
     let latestDate = Math.max(...dateMilliseconds);
-    
+
     // 최근 날짜의 인덱스를 찾습니다.
     let index = dateMilliseconds.indexOf(latestDate);
 
