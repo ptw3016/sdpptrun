@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const fs = require('fs');
 const ktMsgSendPr = require("./ktMsgSendPr");
+const timecvPr = require("./timecvPr");
 
 require("dotenv").config();
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -859,27 +860,9 @@ async function bldMidPhNumb(phnumb) {
 
 async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
   try {
-    // console.log("ipdt1:" + ipdt1);
-    // console.log("iptime1:" + iptime1);
-    // console.log("exttime:" + exttime);
-
+    const exttimecv = await timecvPr.exttimecv(exttime);
     const inputDate1 = await ipdt1.split('.');
     const inputTime1 = await iptime1.split(' - ');
-    const inputDate2 = await exttime.split('(');
-    const inputDate2cv = await inputDate2[0].split('.');  
-    const inputDate2cv2 = await inputDate2[1].split(') ');
-    //console.log("inputDate2" + inputDate2); 
-    //2023. 10. 26,목) 오전 9:00~오전 10:00,1시간)
-    //Sat, 28 Oct 2023, 5:30 PM~6:30 PM(1hour)
-
-    const inputDate2cv3 = await inputDate2cv2[1].split('~');
-
-    // console.log("-inputDate1:"+inputDate1);
-    // console.log("-inputTime1:"+inputTime1);
-    // console.log("-inputDate2cv:"+inputDate2cv)
-    // console.log("-inputDate2_2:"+inputDate2[1])
-    // console.log("-inputDate2cv2:"+inputDate2cv2[1])
-    // console.log("-inputDate2cv3:"+inputDate2cv3)
 
     const ipdate_year = parseInt(inputDate1[0]);
     const ipdate_month = parseInt(inputDate1[1]);
@@ -887,11 +870,11 @@ async function checkSchedule(ipdt1, iptime1, exttime, ipbk1, exbk1) {
     const ipdate_time1 = inputTime1[0];
     const ipdate_time2 = inputTime1[1];
 
-    const exdate_year = parseInt(inputDate2cv[0]);
-    const exdate_month = parseInt(inputDate2cv[1]);
-    const exdate_date = parseInt(inputDate2cv[2]);
-    const exdate_time1 = inputDate2cv3[0];
-    const exdate_time2 = inputDate2cv3[1];
+    const exdate_year = parseInt(exttimecv.year);
+    const exdate_month = parseInt(exttimecv.month);
+    const exdate_date = parseInt(exttimecv.date);
+    const exdate_time1 = exttimecv.exttime1;
+    const exdate_time2 =  exttimecv.exttime2;
 
     // console.log(ipdate_year);
     // console.log(ipdate_month);
