@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const scrapeLogic = require("./scrapeLogic");
+
 const fs = require('fs');
 
 require("dotenv").config();
@@ -265,10 +266,15 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             e.message + "\n" +
             "-----error stack-----\n" +
             e.stack +
-            "-----chk info--------\n" +
-            "/prscinfoname:"+prscinfoname+"\n"+
-            "";
-        const sshotattach2 = await sdipage.screenshot({ fullPage: true });
+            "-----이용내역 최근chk info--------\n" +
+            "*조회된nm : " + prscinfoname + "\n" +
+            "*조회된cp : " + prscinfophnum + "\n" +
+            "---------------\n" +
+            "memberinfochk:" + memberinfochk + "\n" +
+            "minfochkname:" + minfochkname + "\n" +
+            "minfochkphnum:" + minfochkphnum + "\n" +
+            "minfochkself:" + minfochkself + "\n";
+
 
         var sendemjson = {
             to: process.env.sdadminnvml,
