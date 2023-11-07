@@ -280,8 +280,6 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             to: process.env.sdadminnvml,
             subject: emailsubject,
             message: emailcontent,
-            attachmsg: "ok",
-            screenshotfn: sshotattach2
         }
         //메일 전송
         scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
