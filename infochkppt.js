@@ -75,19 +75,10 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         //console.log('입력후 로그인버튼 클릭!');
         await sdipage.click('.btn_login');
-        const liXPathsrch = '//*[@id="app"]/div[1]/div[2]/div[2]/div/div[2]/div[4]/div[2]';
-        await sdipage.waitForXPath(liXPathsrch);
         await sdipage.waitForTimeout(1000);
 
-
-
-        const liXPathsrch3 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[1]/div/div/div[3]/div/div/div/div[1]/a';
-        await sdipage.waitForXPath(liXPathsrch3);
-
-        const liXPathsrch2 = '//*[@id="app"]/div/div[2]/div[2]/div/div[2]/div[4]/div[2]';
-        await sdipage.waitForXPath(liXPathsrch2);
-
-        await sdipage.waitForTimeout(1000);
+        // const screenshot = await sdipage.screenshot({ fullPage: true });
+        // fs.writeFileSync('screenshot.png', screenshot);
 
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__contents-inner__")]');
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__content__")]');
@@ -130,9 +121,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             await sdipage.waitForTimeout(500);
             //console.log("infochknm:" + prscinfoname);
             // console.log("수정중ph:" + prscinfophnum);
-            //const screenshot = await sdipage.screenshot({ fullPage: true });
-            //스크린샷 저장
-            //fs.writeFileSync('screenshot.png', screenshot);
+
 
         } else {
             const sshotattach = await sdipage.screenshot({ fullPage: true });
@@ -256,7 +245,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
 
     } catch (e) {
-
+        
         console.error(e);
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
@@ -336,5 +325,7 @@ async function findLatestDate(dateArray) {
 function numpad(number) {
     return number.toString().padStart(2, "0");
 }
+
+sdprgetinfo();
 
 module.exports = { sdprgetinfo };
