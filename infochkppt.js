@@ -326,6 +326,6 @@ function numpad(number) {
     return number.toString().padStart(2, "0");
 }
 
-sdprgetinfo();
+// sdprgetinfo();
 
 module.exports = { sdprgetinfo };
