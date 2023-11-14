@@ -513,7 +513,7 @@ const scrapeLogic = async (reqbd, res) => {
           }
 
 
-          if (extText.indexOf("예약") != -1 && extText.indexOf("확정") != -1 && isScheduleMatching == true) {
+          if (extText.indexOf("Confirm") != -1 && extText.indexOf("Booking") != -1 && isScheduleMatching == true) {
             //console.log("예약확정 메시지 확인!.");
             const ktsjs = {
               tonum: stipVALUES[0][17],   //*수정준비 - stipVALUES[0][17],
@@ -595,7 +595,7 @@ const scrapeLogic = async (reqbd, res) => {
               "------------" + "\n" +
               "isScheduleMatching : " + isScheduleMatching + "\n" +
               "완료확인된일정 : " + bookedDate + "\n" +
-              "완료확인된부스 : " + product +
+              "완료확인된부스 : " + product + "\n" +
               "완료확정메시지 :" + extText;
 
             stipVALUES[0][2] = "마지막확인X/예약에러";
