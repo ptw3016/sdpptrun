@@ -240,7 +240,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             //메일 전송
             scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
             //scrapeLogic.ggstprUserApd(pruserValues);
-            return { memberinfochk: memberinfochk, minfochkname: minfochkname, minfochkphnum: minfochkphnum, mifcrtcode: "0002" }
+            return { memberinfochk: memberinfochk, minfochkname: prscinfoname, minfochkphnum: prscinfophnum, mifcrtcode: "0002" }
         }
 
 
