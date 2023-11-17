@@ -75,7 +75,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         //console.log('입력후 로그인버튼 클릭!');
         await sdipage.click('.btn_login');
-        await sdipage.waitForTimeout(1000);
+        await sdipage.waitForTimeout(2000);
 
         // const screenshot = await sdipage.screenshot({ fullPage: true });
         // fs.writeFileSync('screenshot.png', screenshot);
