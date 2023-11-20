@@ -79,7 +79,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         await sdipage.click('.btn_login');
         await sdipage.waitForTimeout(2000);
 
-        throw new Error('error test!');
+        //throw new Error('error test!');
 
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__contents-inner__")]');
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__content__")]');
