@@ -27,10 +27,12 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
                 ? process.env.PUPPETEER_EXECUTABLE_PATH
                 : puppeteer.executablePath(),
     });
+    console.log("ready");
+    const sdipage = await sdprchkbrs.newPage();
     try {
 
-        console.log("ready");
-        const sdipage = await sdprchkbrs.newPage();
+        //console.log("ready");
+        //const sdipage = await sdprchkbrs.newPage();
         // Set screen size
         await sdipage.setViewport({ width: 1920, height: 1080 });
         await sdipage.goto(process.env.NvBkad_SiteUrl, { waitUntil: 'networkidle2' });
@@ -76,6 +78,8 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
         //console.log('입력후 로그인버튼 클릭!');
         await sdipage.click('.btn_login');
         await sdipage.waitForTimeout(2000);
+
+        throw new Error('error test!');
 
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__contents-inner__")]');
         await sdipage.waitForXPath('//*[contains(@class, "BookingListView__content__")]');
@@ -249,6 +253,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
     } catch (e) {
 
         console.error(e);
+        const sdisshotattach = await sdipage.screenshot({ fullPage: true });
         var emailsubject = "예약요청중 에러발생!!";
         var emailcontent = "예약요청중 에러발생!!\n" +
             "----reqbd----\n" +
@@ -256,7 +261,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             "-----error msg-----\n" +
             e.message + "\n" +
             "-----error stack-----\n" +
-            e.stack +
+            e.stack + "\n" +
             "-----이용내역 최근chk info--------\n" +
             "*조회된nm : " + prscinfoname + "\n" +
             "*조회된cp : " + prscinfophnum + "\n" +
@@ -266,11 +271,12 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
             "minfochkphnum:" + minfochkphnum + "\n" +
             "minfochkself:" + minfochkself + "\n";
 
-
         var sendemjson = {
             to: process.env.sdadminnvml,
             subject: emailsubject,
             message: emailcontent,
+            attachmsg: "ok",
+            screenshotfn: sdisshotattach
         }
         //메일 전송
         scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
