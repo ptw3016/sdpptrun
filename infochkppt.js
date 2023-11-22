@@ -77,7 +77,7 @@ const sdprgetinfo = async () => {  //(reqbd, res) 화면 보려면 이거.
 
         //console.log('입력후 로그인버튼 클릭!');
         await sdipage.click('.btn_login');
-        await sdipage.waitForTimeout(2000);
+        await sdipage.waitForTimeout(8000);
 
         //throw new Error('error test!');
 
