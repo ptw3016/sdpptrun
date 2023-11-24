@@ -81,8 +81,6 @@ async function startTimer() {
                 var rstmsglength = messages.length;
             }
 
-
-
             //console.log(rstmsgId);
             if (rstidchk == false) {
                 rstmsgchk = rstmsgId;
@@ -149,6 +147,7 @@ async function startTimer() {
                             continue;
                         }
                         var prusedateext = await prdateExt(prjson.prusedate);
+                        
                         var prscdatejson = await prdtcovDate(prusedateext.ipdatedt);
 
                         var chknameprrt = await blindnamechkPr(infochkname, prjson.prscname);
@@ -316,8 +315,8 @@ async function startTimer() {
                         }
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
-                            var ipmonthval = 10;
-                            var ipdayval = "26";
+                            var ipmonthval = 11;
+                            var ipdayval = "24";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";
@@ -354,6 +353,7 @@ async function startTimer() {
                         };
 
                         if (testsw == process.env.testsw) {
+                            console.log(prjson);
                             console.log(prscjson);
                         }
                         prjsonArray.push(prscjson);
@@ -597,6 +597,7 @@ async function googleemailmsgget(msgid) {
 }
 
 async function sdprnvparse(resultstring) {
+    
     const text = resultstring;
     var startKeyword = "예약자명";
     var endKeyword = "예약신청";
@@ -612,6 +613,11 @@ async function sdprnvparse(resultstring) {
     result = await result.replace(startKeyword, "").trim();
     //console.log(result);
     var prscdate = result;
+    if(prscdate.indexOf("<!--")!=-1){
+        var prscdateAr = prscdate.split("<!--")
+        prscdate = prscdateAr[0].trim();
+    }
+
     startKeyword = "예약번호";
     endKeyword = "예약상품";
     result = await extractTextBetweenWords(text, startKeyword, endKeyword);
@@ -649,6 +655,10 @@ async function sdprnvparse(resultstring) {
     result = await result.replace(startKeyword, "").trim();
     //console.log(result);
     var prgjga = result;
+    if(prgjga.indexOf("<!--")!=-1){
+        var prgjgaAr = prgjga.split("<!--")
+        prgjga = prgjgaAr[0].trim();
+    }
 
     startKeyword = "요청사항";
     endKeyword = "자세히 보기";
@@ -656,6 +666,10 @@ async function sdprnvparse(resultstring) {
     result = await result.replace(startKeyword, "").trim();
     //console.log(result);
     var prscrq = result;
+    if(prscrq.indexOf("<!--")!=-1){
+        var prscrqAr = prscrq.split("<!--")
+        prscrq = prscrqAr[0].trim();
+    }
 
     var totaljson = {
         prscname: prscname,
@@ -766,36 +780,6 @@ async function prdtcovDate(dateString) {
     return extDateJson;
 }
 
-async function sendemailPr2(sendemjson) {
-    const authClient = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-    authClient.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-    var to = sendemjson.to;
-    var subject = sendemjson.subject;
-    var message = sendemjson.message;
-
-    const accessToken = await authClient.getAccessToken();
-    const transport = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            type: 'OAuth2',
-            user: process.env.sdadmingmml,
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-            accessToken: accessToken,
-        },
-    });
-    const mailOptions = {
-        from: '"테스트" <' + process.env.sdadminnvml + '>', // 발신자 정보
-        to: to, // 수신자 정보
-        subject: subject, // 제목
-        text: message, // 내용 (텍스트)
-        //html: "<b>html-이메일 테스트중</b>", // 내용 (HTML)
-    };
-    const result = await transport.sendMail(mailOptions);
-    //console.log(result);
-}
 
 async function blindnamechkPr(ipname, dbname) {
     // ipname = "홍길준";
