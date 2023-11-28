@@ -1,9 +1,7 @@
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
-const nodemailer = require("nodemailer");
-const scrapeLogic = require("./scrapeLogic");
+const scrapeLogic = require("./scrapeLogicmb");
 const infochkppt = require("./infochkppt");
-const fs = require('fs');
 
 require("dotenv").config();
 
@@ -17,6 +15,7 @@ let interval;
 var counta = 1;
 var rstmsgchk = "";
 var rstidchk = false;
+
 const testsw = "";   //test sw - timeset-search! , *
 const devsw = ""; //dev sw
 
@@ -118,8 +117,8 @@ async function startTimer() {
 
                         //***
                         if (testsw == process.env.testsw) {
-                            var infochkrt = await infochkppt.sdprgetinfo();
-                            infochkname = infochkrt.minfochkname;
+                            //var infochkrt = await infochkppt.sdprgetinfo();
+                            infochkname = "홍길동";
                             infochkphnum = process.env.prktmsgttestnum;
                             testchk = "testing";
                             infochkerrt = "0000";
@@ -159,168 +158,176 @@ async function startTimer() {
                         //***
                         if (testsw == process.env.testsw) {
                             chknrst = true;
-                        }
-                        //--**
+                        }else{
+                            var gjgach = prjson.prgjga;
+                            gjgach = await gjgach.split("=");
+                            var gjgacha = await gjgach[1].trim();
+                            var gjgachatt = await gjgacha.slice(0, -1);
+                            var scgstext = gjgach[0];
+                            var startKeyword = "(비회원)(";
+                            var endKeyword = ")";
+                            var result = await extractTextBetweenWords(scgstext, startKeyword, endKeyword);
+                            var scgstext = await result.replace(startKeyword, "").trim();
+                            var scgstextnum = parseInt(scgstext);
+                            const VALUES = [
+                                [
+                                    "예약",
+                                    SdTitle + " Lab",
+                                    "미배정",
+                                    prjson.prscsp,
+                                    prjson.prscdate,
+                                    prjson.prscname,
+                                    prusedateext.ipdatedt,
+                                    prusedateext.ipdatest1,
+                                    prusedateext.ipdatest2,
+                                    prusedateext.ipdateed1,
+                                    prusedateext.ipdateed2,
+                                    prjson.prgjst,
+                                    prjson.prgjsd,
+                                    gjgachatt,
+                                    prjson.prscrq,
+                                    scgstext,
+                                    prjson.prscnum,
+                                    infochkphnum,
+                                ]
+                            ];
+                            let prUserVal = [["예약", SdTitle, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", ""]];
+                            if (infochkerrt == "0000") {   //info OK,self X,
 
-                        var gjgach = prjson.prgjga;
-                        gjgach = await gjgach.split("=");
-                        var gjgacha = await gjgach[1].trim();
-                        var gjgachatt = await gjgacha.slice(0, -1);
-                        var scgstext = gjgach[0];
-                        var startKeyword = "(비회원)(";
-                        var endKeyword = ")";
-                        var result = await extractTextBetweenWords(scgstext, startKeyword, endKeyword);
-                        var scgstext = await result.replace(startKeyword, "").trim();
-                        var scgstextnum = parseInt(scgstext);
-                        //scgstextnum = 2;  //갯수 test용
-                        const VALUES = [
-                            [
-                                "예약",
-                                SdTitle + " Lab",
-                                "미배정",
-                                prjson.prscsp,
-                                prjson.prscdate,
-                                prjson.prscname,
-                                prusedateext.ipdatedt,
-                                prusedateext.ipdatest1,
-                                prusedateext.ipdatest2,
-                                prusedateext.ipdateed1,
-                                prusedateext.ipdateed2,
-                                prjson.prgjst,
-                                prjson.prgjsd,
-                                gjgachatt,
-                                prjson.prscrq,
-                                scgstext,
-                                prjson.prscnum,
-                                infochkphnum,
-                            ]
-                        ];
-
-                        let prUserVal = [["예약", SdTitle, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", ""]];
-
-                        if (infochkerrt == "0000") {   //info OK,self X,
-
-                        } else {
-                            var emailsubject = "";
-                            var emailcontent = "";
-                            var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
-
-                            var prdatecv2 = await scrapeLogic.weekdaypr(prdatecv);
-                            var prdatecv3 = prscdatejson.dateYear + "." + scrapeLogic.numpad(prscdatejson.dateMonth) + "." + scrapeLogic.numpad(prscdatejson.dateDay)+".";
-
-                            var prtimecv = prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2;
-                            if (infochkerrt == "0001") {
-                                emailsubject = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.";
-                                emailcontent = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
+                            } else {
+                                var emailsubject = "";
+                                var emailcontent = "";
+                                var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
+    
+                                var prdatecv2 = await scrapeLogic.weekdaypr(prdatecv);
+                                var prdatecv3 = prscdatejson.dateYear + "." + scrapeLogic.numpad(prscdatejson.dateMonth) + "." + scrapeLogic.numpad(prscdatejson.dateDay)+".";
+    
+                                var prtimecv = prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2;
+                                if (infochkerrt == "0001") {
+                                    emailsubject = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.";
+                                    emailcontent = "(Lab연습실)이용자 정보는 확인되었으나 셀프모드입니다.\n" +
+                                        "----reqbd----\n" +
+                                        "/신청자명 : " + infochkname + "\n" +
+                                        "/신청자phnum : " + infochkphnum + " (" + testchk + ")" + "\n" +
+                                        "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
+                                        "/예약일자 : " + prdatecv2 + "\n" +
+                                        "/예약시간 : " + prtimecv + "\n" +
+                                        "/예약갯수 : " + scgstextnum + "개";
+    
+                                    VALUES[0][2] = "셀프모드/미배정";
+    
+                                    var sendemjson = {
+                                        to: process.env.sdadminnvml,
+                                        subject: emailsubject,
+                                        message: emailcontent
+                                    }
+    
+                                    //메일 전송
+                                    scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
+                                    scrapeLogic.googlesheetappend(VALUES);
+                                    continue;
+    
+                                } else if (infochkerrt == "0002") {
+                                    emailsubject = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 예약은 진행하였으나 신규일 수 있으니 확인해보세요!";
+                                    emailcontent = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 예약은 진행하였으나 신규일 수 있으니 확인해보세요!\n" +
+                                        "----reqbd----\n" +
+                                        "/조회내역nm : " + infochkname + "\n" +
+                                        "/조회내역ph : " + infochkphnum + " (" + testchk + ")" + "\n" +
+                                        "/이메일nm : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
+                                        "/예약일자 : " + prdatecv2 + "\n" +
+                                        "/예약시간 : " + prtimecv + "\n" +
+                                        "/예약갯수 : " + scgstextnum + "개";
+    
+                                    //메일 전송
+    
+                                    var sendemjson = {
+                                        to: process.env.sdadminnvml,
+                                        subject: emailsubject,
+                                        message: emailcontent
+                                    }
+                                    scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
+                                  
+                                    prUserVal[0][3] = prdatecv3;
+                                    prUserVal[0][5] = infochkname;
+                                    prUserVal[0][6] = infochkphnum;
+                                    prUserVal[0][7] = prdatecv2;
+                                    prUserVal[0][8] = prtimecv;
+                                    scrapeLogic.ggstprUserApd(prUserVal);
+                                }
+    
+                            }
+    
+                            if (chknrst == true) {
+                                console.log("nyname 일치 확인!");
+                            } else {
+                                console.log("신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.");
+                                var emailsubject = "신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.";
+                                var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
+                                var emailcontent = "신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.\n" +
                                     "----reqbd----\n" +
-                                    "/신청자명 : " + infochkname + "\n" +
-                                    "/신청자phnum : " + infochkphnum + " (" + testchk + ")" + "\n" +
+                                    "/신청자명 : " + infochkname + "(예약내역에서 가져온 이름)\n" +
                                     "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
-                                    "/예약일자 : " + prdatecv2 + "\n" +
-                                    "/예약시간 : " + prtimecv + "\n" +
+                                    "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
+                                    "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
                                     "/예약갯수 : " + scgstextnum + "개";
-
-                                VALUES[0][2] = "셀프모드/미배정";
-
+    
+                                VALUES[0][2] = "이메일정보불일치/오류";
+    
                                 var sendemjson = {
                                     to: process.env.sdadminnvml,
                                     subject: emailsubject,
                                     message: emailcontent
                                 }
-
                                 //메일 전송
                                 scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
                                 scrapeLogic.googlesheetappend(VALUES);
                                 continue;
-
-                            } else if (infochkerrt == "0002") {
-                                emailsubject = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 예약은 진행하였으나 신규일 수 있으니 확인해보세요!";
-                                emailcontent = "(Lab연습실)이용자 정보중 일치하는 정보가 없습니다! 예약은 진행하였으나 신규일 수 있으니 확인해보세요!\n" +
+                            }
+                             //scgstextnum = 2;  //갯수 test용
+                            if (scgstextnum > 1) {  //신청갯수 2개이상이면 한번더 수동으로!
+                                console.log("신청갯수가 " + scgstextnum + "개 이어서 수동으로 더 잡아야합니다!");
+                                var scgstextnum2 = scgstextnum - 1;
+                                var emailsubject = "연습실 유료 신청 갯수가 " + scgstextnum + "개 이어서 수동으로 [" + scgstextnum2 + "개] 더 잡아야합니다!";
+                                var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
+                                var emailcontent = "연습실 유료 신청 갯수가 " + scgstextnum + "개 이어서 수동으로 [" + scgstextnum2 + "개] 더 잡아야합니다!\n" +
                                     "----reqbd----\n" +
-                                    "/조회내역nm : " + infochkname + "\n" +
-                                    "/조회내역ph : " + infochkphnum + " (" + testchk + ")" + "\n" +
-                                    "/이메일nm : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
-                                    "/예약일자 : " + prdatecv2 + "\n" +
-                                    "/예약시간 : " + prtimecv + "\n" +
+                                    "/예약자명 : " + prjson.prscname + "\n" +  //name
+                                    "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
+                                    "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
                                     "/예약갯수 : " + scgstextnum + "개";
-
-                                //메일 전송
-
+    
+                                //VALUES[0][2] = "신청갯수2개이상/수동";  
+    
                                 var sendemjson = {
                                     to: process.env.sdadminnvml,
                                     subject: emailsubject,
                                     message: emailcontent
                                 }
+                                //메일 전송
                                 scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-                              
-                                prUserVal[0][3] = prdatecv3;
-                                prUserVal[0][5] = infochkname;
-                                prUserVal[0][6] = infochkphnum;
-                                prUserVal[0][7] = prdatecv2;
-                                prUserVal[0][8] = prtimecv;
-                                scrapeLogic.ggstprUserApd(prUserVal);
+                                //await scrapeLogic.googlesheetappend(VALUES);
                             }
-
                         }
+                        //--**
 
-                        if (chknrst == true) {
-                            console.log("nyname 일치 확인!");
-                        } else {
-                            console.log("신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.");
-                            var emailsubject = "신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.";
-                            var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
-                            var emailcontent = "신청자이름과 이메일 정보 이름이 다른것 같습니다. 종료합니다.\n" +
-                                "----reqbd----\n" +
-                                "/신청자명 : " + infochkname + "(예약내역에서 가져온 이름)\n" +
-                                "/예약자명 : " + prjson.prscname + "(이메일에서 가져온 이름)\n" +  //name
-                                "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
-                                "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
-                                "/예약갯수 : " + scgstextnum + "개";
-
-                            VALUES[0][2] = "이메일정보불일치/오류";
-
-                            var sendemjson = {
-                                to: process.env.sdadminnvml,
-                                subject: emailsubject,
-                                message: emailcontent
-                            }
-                            //메일 전송
-                            scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-                            scrapeLogic.googlesheetappend(VALUES);
-                            continue;
-                        }
-
-                        if (scgstextnum > 1) {  //신청갯수 2개이상이면 한번더 수동으로!
-                            console.log("신청갯수가 " + scgstextnum + "개 이어서 수동으로 더 잡아야합니다!");
-                            var scgstextnum2 = scgstextnum - 1;
-                            var emailsubject = "연습실 유료 신청 갯수가 " + scgstextnum + "개 이어서 수동으로 [" + scgstextnum2 + "개] 더 잡아야합니다!";
-                            var prdatecv = prscdatejson.dateYear + "-" + scrapeLogic.numpad(prscdatejson.dateMonth) + "-" + scrapeLogic.numpad(prscdatejson.dateDay);
-                            var emailcontent = "연습실 유료 신청 갯수가 " + scgstextnum + "개 이어서 수동으로 [" + scgstextnum2 + "개] 더 잡아야합니다!\n" +
-                                "----reqbd----\n" +
-                                "/예약자명 : " + prjson.prscname + "\n" +  //name
-                                "/예약일자 : " + await scrapeLogic.weekdaypr(prdatecv) + "\n" +
-                                "/예약시간 : " + prusedateext.ipdatest1 + " " + prusedateext.ipdatest2 + " - " + prusedateext.ipdateed1 + " " + prusedateext.ipdateed2 + "\n" +
-                                "/예약갯수 : " + scgstextnum + "개";
-
-                            //VALUES[0][2] = "신청갯수2개이상/수동";  
-
-                            var sendemjson = {
-                                to: process.env.sdadminnvml,
-                                subject: emailsubject,
-                                message: emailcontent
-                            }
-                            //메일 전송
-                            scrapeLogic.sendemailPr(sendemjson); // 이메일 전송
-                            //await scrapeLogic.googlesheetappend(VALUES);
-                        }
+                       
                         if (testsw == process.env.testsw) { //timeset
                             var ipyearval = 2023;
                             var ipmonthval = 11;
-                            var ipdayval = "24";
+                            var ipdayval = "29";
                             var iptimestval1 = "오전";
                             var iptimeedval1 = "오전";
                             var iptimestval2 = "9:00";
                             var iptimeedval2 = "10:00";
+
+                            var ipgjst = "gjst";
+                            var ipgjsd = "gjsd";
+                            var ipgjga = "gjga";
+                            var ipprscrq = "prscrq";
+                            var prscnum = "prscnum";
+                            var prscsp = "prscsp";
+                            var ipscdate = "scdate";
+                            var scgstext = "scgstext";
                         } else {
                             var ipyearval = prscdatejson.dateYear;
                             var ipmonthval = prscdatejson.dateMonth;
@@ -329,6 +336,14 @@ async function startTimer() {
                             var iptimeedval1 = prusedateext.ipdateed1;
                             var iptimestval2 = prusedateext.ipdatest2;
                             var iptimeedval2 = prusedateext.ipdateed2;
+
+                            var ipgjst = prjson.prgjst;
+                            var ipgjsd = prjson.prgjsd;
+                            var ipgjga = gjgachatt;
+                            var ipprscrq = prjson.prscrq;
+                            var prscnum = prjson.prscnum;
+                            var prscsp = prjson.prscsp;
+                            var ipscdate = prjson.prscdate;
                         }
 
                         var prscjson = {  // 실사용
@@ -341,19 +356,18 @@ async function startTimer() {
                             timegb2: iptimeedval1, //스트링으로만!
                             iptime: iptimestval2, //스트링으로만!
                             iptime2: iptimeedval2, //스트링으로만!
-                            ipgjst: prjson.prgjst,
-                            ipgjsd: prjson.prgjsd,
-                            ipgjga: gjgachatt,
-                            ipprscrq: prjson.prscrq,
+                            ipgjst: ipgjst,
+                            ipgjsd: ipgjsd,
+                            ipgjga: ipgjga,
+                            ipprscrq: ipprscrq,
                             scgstext: scgstext,
-                            prscnum: prjson.prscnum,
-                            prscsp: prjson.prscsp,
-                            ipscdate: prjson.prscdate,
+                            prscnum: prscnum,
+                            prscsp: prscsp,
+                            ipscdate: ipscdate,
                             infochkphnum: infochkphnum,
                         };
 
                         if (testsw == process.env.testsw) {
-                            console.log(prjson);
                             console.log(prscjson);
                         }
                         prjsonArray.push(prscjson);
@@ -597,7 +611,7 @@ async function googleemailmsgget(msgid) {
 }
 
 async function sdprnvparse(resultstring) {
-    
+    try{
     const text = resultstring;
     var startKeyword = "예약자명";
     var endKeyword = "예약신청";
@@ -684,6 +698,10 @@ async function sdprnvparse(resultstring) {
     }
     //console.log(totaljson);
     return totaljson;
+    }catch(e){
+        console.error(e);
+
+    }
 }
 
 function extractTextBetweenWords(inputText, startWord, endWord) {

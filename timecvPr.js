@@ -1,22 +1,35 @@
 async function exttimecv(fulldatestring) {
-
-    const fdtcommaSplit = fulldatestring.split(",");
-    let yearmonthday = fdtcommaSplit[1].trim();
-    let yearmonthdaySplit = yearmonthday.split(" ");
-    let timestring = fdtcommaSplit[2].trim();
-    let timeStringSplit = timestring.split("(");
-    let timeStringSplit2 = timeStringSplit[0].split("~");
-
-    const daynm = translateDayOfWeek(fdtcommaSplit[0]);
-    const month = monthNameToNumber(yearmonthdaySplit[1]);
-    const year = parseInt(yearmonthdaySplit[2]);
-    const date = parseInt(yearmonthdaySplit[0]);
-    const exttime1 = formatTime(timeStringSplit2[0]);
-    const exttime2 = formatTime(timeStringSplit2[1]);
-
-    return { daynm: daynm, year: year, month: month, date: date, exttime1: exttime1, exttime2: exttime2 }
+    if (fulldatestring.indexOf(",") != -1) {
+        const fdtcommaSplit = fulldatestring.split(",");
+        let yearmonthday = fdtcommaSplit[1].trim();
+        let yearmonthdaySplit = yearmonthday.split(" ");
+        let timestring = fdtcommaSplit[2].trim();
+        let timeStringSplit = timestring.split("(");
+        let timeStringSplit2 = timeStringSplit[0].split("~");
+        const daynm = translateDayOfWeek(fdtcommaSplit[0]);
+        const month = monthNameToNumber(yearmonthdaySplit[1]);
+        const year = parseInt(yearmonthdaySplit[2]);
+        const date = parseInt(yearmonthdaySplit[0]);
+        const exttime1 = formatTime(timeStringSplit2[0]);
+        const exttime2 = formatTime(timeStringSplit2[1]);
+        return { daynm: daynm, year: year, month: month, date: date, exttime1: exttime1, exttime2: exttime2 }
+    } else {
+        //2023. 11. 28(화) 오전 9:00~오전 10:00(1시간)
+        let yearmonthdaySplit = fulldatestring.split(") ");
+        let yearmonthdayAr = yearmonthdaySplit[0].split(". ");
+        const dayAr = yearmonthdayAr[2].split("(");
+        const date = parseInt(dayAr[0]);
+        const daynm = dayAr[1];
+        const month = parseInt(yearmonthdayAr[1]);
+        const year = parseInt(yearmonthdayAr[0]);
+        let timestring = yearmonthdaySplit[1].trim();
+        let timeStringSplit = timestring.split("(");
+        let timeStringSplit2 = timeStringSplit[0].split("~");
+        const exttime1 = timeStringSplit2[0];
+        const exttime2 = timeStringSplit2[1];
+        return { daynm: daynm, year: year, month: month, date: date, exttime1: exttime1, exttime2: exttime2 }
+    }
 }
- 
 
 function translateDayOfWeek(dayOfWeek) {
     const dayOfWeekMap = {
